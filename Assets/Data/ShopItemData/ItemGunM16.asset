@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: ItemGunM16
+  m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  nameOfItem: M-16
+  description: 
+  maxAmount: 455
+  currentAmount: 455
+  imgDescription: {fileID: 21300000, guid: 6415949084057c24f8424d1e23755dbe, type: 3}
+  priceToUpgrade: 2300
+  currentLevel: 9
+  damage: 1586
+  bulletSpeed: 1085
+  reloadTime: 1
+  priceOfABullet: 6

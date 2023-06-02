@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: ItemGunGrenadeLauncher
+  m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  nameOfItem: GrenadeLauncher
+  description: 
+  maxAmount: 115
+  currentAmount: 115
+  imgDescription: {fileID: 21300000, guid: 1174d15837d68184c9a81a2340b467a5, type: 3}
+  priceToUpgrade: 2000
+  currentLevel: 9
+  damage: 980
+  bulletSpeed: 782
+  reloadTime: 3
+  priceOfABullet: 10
