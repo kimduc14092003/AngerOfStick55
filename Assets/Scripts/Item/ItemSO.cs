@@ -20,5 +20,22 @@ public class ItemGun : ItemSO
     public int damage;
     public int bulletSpeed;
     public float reloadTime;
+    public int priceOfGun;
     public int priceOfABullet;
+}
+
+[CreateAssetMenu(fileName = "NewItem", menuName = "ShopItem/Melee")]
+public class ItemMelee : ItemSO
+{
+    public int damage;
+    public int priceOfWeapon;
+    public int priceToFix;
+}
+
+[CreateAssetMenu(fileName = "NewItem", menuName = "ShopItem/Friend")]
+public class ItemFriend :ItemSO
+{
+    public int damage;
+    public bool isSelected;
+    public int priceOfFriend;
 }

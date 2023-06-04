@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: ItemFriend6
+  m_EditorClassIdentifier: Assembly-CSharp::ItemFriend
+  nameOfItem: Friend
+  description: 
+  maxAmount: 700
+  currentAmount: 700
+  imgDescription: {fileID: 21300000, guid: 0aff036c44c15e04093de93bc1788873, type: 3}
+  priceToUpgrade: 120
+  currentLevel: 1
+  damage: 220
+  isSelected: 0
+  priceOfFriend: 45000
