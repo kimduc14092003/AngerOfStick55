@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName ="NewItem",menuName = "ShopItem/Item")]
 public class ItemSO : ScriptableObject
 {
+    public string id;
     public string nameOfItem;
     public string description;
     public int maxAmount;

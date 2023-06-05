@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunVip3
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunVip3
   nameOfItem: Tavor
   description: 
   maxAmount: 143

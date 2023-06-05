@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunVip10
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunVip10
   nameOfItem: CSR-776
   description: 
   maxAmount: 208

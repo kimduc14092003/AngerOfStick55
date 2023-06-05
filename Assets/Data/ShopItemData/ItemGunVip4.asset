@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunVip4
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunVip4
   nameOfItem: GrenadeLaucher
   description: 
   maxAmount: 104

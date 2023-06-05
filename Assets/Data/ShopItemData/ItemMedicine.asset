@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd9f98eaaa3e3744b9872e3ca5aa6e8e, type: 3}
   m_Name: ItemMedicine
   m_EditorClassIdentifier: 
+  id: ItemMedicine
   nameOfItem: Medicine Bottle
-  description: 
-  maxAmount: 0
-  currentAmount: 0
-  imgDescription: {fileID: 0}
-  priceToUpgrade: 0
-  currentLevel: 0
+  description: ( You can be cured with medicine bottle when infected by Zombie )
+  maxAmount: 5
+  currentAmount: 5
+  imgDescription: {fileID: 21300000, guid: 348387c83369e8946acf075d9771c7a6, type: 3}
+  priceToUpgrade: 220
+  currentLevel: 1

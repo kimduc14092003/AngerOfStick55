@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunMicrogun
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunMicrogun
   nameOfItem: Microgun
   description: 
   maxAmount: 546
@@ -22,4 +23,5 @@ MonoBehaviour:
   damage: 3162
   bulletSpeed: 1104
   reloadTime: 0.5
+  priceOfGun: 0
   priceOfABullet: 9

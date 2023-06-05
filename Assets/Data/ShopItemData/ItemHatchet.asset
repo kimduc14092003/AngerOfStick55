@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemHatchet
   m_EditorClassIdentifier: Assembly-CSharp::ItemMelee
+  id: ItemHatchet
   nameOfItem: Hatchet
   description: 
   maxAmount: 90

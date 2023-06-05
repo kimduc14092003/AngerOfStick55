@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunM16
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunM16
   nameOfItem: M-16
   description: 
   maxAmount: 455
@@ -22,4 +23,5 @@ MonoBehaviour:
   damage: 1586
   bulletSpeed: 1085
   reloadTime: 1
+  priceOfGun: 0
   priceOfABullet: 6

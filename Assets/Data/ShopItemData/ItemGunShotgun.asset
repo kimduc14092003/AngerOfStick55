@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunShotgun
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunShotgun
   nameOfItem: Shotgun
   description: 
   maxAmount: 181
@@ -22,4 +23,5 @@ MonoBehaviour:
   damage: 3190
   bulletSpeed: 874
   reloadTime: 4
+  priceOfGun: 0
   priceOfABullet: 5

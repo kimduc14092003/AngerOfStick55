@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemNade
   m_EditorClassIdentifier: Assembly-CSharp::ItemMelee
+  id: ItemNade
   nameOfItem: Grenade
   description: 
   maxAmount: 40

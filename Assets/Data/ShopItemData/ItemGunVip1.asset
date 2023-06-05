@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunVip1
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunVip1
   nameOfItem: ARG-170
   description: 
   maxAmount: 104

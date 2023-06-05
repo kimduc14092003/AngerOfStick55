@@ -1,17 +1,21 @@
-﻿using System.Collections;
+﻿using Spine.Unity;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private float horizontalValue;
-    private bool isFacingRight;
     [SerializeField] private float speed,jumpingPower;
-    [SerializeField] private Rigidbody2D rb;
+    private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck,headCheck;
     [SerializeField] private LayerMask groundLayer,climbPointLayer;
     [SerializeField] private int jumpMax, jumpCount;
-    [SerializeField] private Vector2 offset1; 
+    [SerializeField] private Vector2 offset1;
+    [SerializeField] private SkeletonAnimation skeletonAnimation;
+    
+    [SpineAnimation] public string idleAnim,runAnim,jumpAnim,hitAnim,deadAnim,jumpKick1Anim,jumpKick2Anim,skillAnim,wrestleAnim;
+    private float horizontalValue;
+    private bool isFacingRight;
     private bool isClimb,isBow;
     private bool isFalling=false;
 
@@ -25,6 +29,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         capsuleCollider = GetComponent<CapsuleCollider2D>();
+        rb = gameObject.GetComponent<Rigidbody2D>();
         isBow = false;
     }
 
@@ -34,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
         HandlePlayerInput();
         FlipPlayer();
         HandleCharacterClimb();
-
+        HandlePlayerAnimation();
         if (IsCharacterClimb())
         {
             jumpCount = jumpMax;
@@ -54,12 +59,14 @@ public class PlayerMovement : MonoBehaviour
         {
             StopBow();
             isFacingRight = true;
+            
         }
         else
         if(horizontalValue < 0)
         {
             StopBow();
             isFacingRight = false;
+            
         }
         // Xử lý sự kiện nhảy của Player
         if (Input.GetButtonDown("Jump"))
@@ -165,6 +172,22 @@ public class PlayerMovement : MonoBehaviour
         if (!isFalling)
         {
             isClimb = value;
+        }
+    }
+
+    private void HandlePlayerAnimation()
+    {
+        if (horizontalValue != 0)
+        {
+            if (skeletonAnimation.AnimationState.ToString() != runAnim)
+            {
+                skeletonAnimation.AnimationState.SetAnimation(0, runAnim, true);
+            };
+        }
+
+        else
+        {
+            skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
         }
     }
 

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemSword2
   m_EditorClassIdentifier: Assembly-CSharp::ItemMelee
+  id: ItemSword2
   nameOfItem: Sword
   description: 
   maxAmount: 70

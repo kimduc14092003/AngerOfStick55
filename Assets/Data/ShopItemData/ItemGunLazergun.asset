@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunLazergun
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunLazergun
   nameOfItem: Lazergun
   description: 
   maxAmount: 424
@@ -22,4 +23,5 @@ MonoBehaviour:
   damage: 2542
   bulletSpeed: 690
   reloadTime: 2
+  priceOfGun: 0
   priceOfABullet: 6

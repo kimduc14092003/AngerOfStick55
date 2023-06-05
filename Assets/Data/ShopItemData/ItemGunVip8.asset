@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunVip8
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunVip8
   nameOfItem: LazerGun
   description: 
   maxAmount: 182

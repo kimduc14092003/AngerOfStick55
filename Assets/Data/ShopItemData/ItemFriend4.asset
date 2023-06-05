@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemFriend4
   m_EditorClassIdentifier: Assembly-CSharp::ItemFriend
+  id: ItemFriend4
   nameOfItem: Friend
   description: 
   maxAmount: 480

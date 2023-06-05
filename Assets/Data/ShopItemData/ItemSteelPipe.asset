@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemSteelPipe
   m_EditorClassIdentifier: Assembly-CSharp::ItemMelee
+  id: ItemSteelPipe
   nameOfItem: Steel Pipe
   description: 
   maxAmount: 40

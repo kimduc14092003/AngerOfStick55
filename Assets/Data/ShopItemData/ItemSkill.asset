@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd9f98eaaa3e3744b9872e3ca5aa6e8e, type: 3}
   m_Name: ItemSkill
   m_EditorClassIdentifier: 
+  id: ItemSkill
   nameOfItem: SKILL
   description: (SKILL)
   maxAmount: 3

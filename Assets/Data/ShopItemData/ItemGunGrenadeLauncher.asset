@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunGrenadeLauncher
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunGrenadeLauncher
   nameOfItem: GrenadeLauncher
   description: 
   maxAmount: 115
@@ -22,4 +23,5 @@ MonoBehaviour:
   damage: 980
   bulletSpeed: 782
   reloadTime: 3
+  priceOfGun: 0
   priceOfABullet: 10

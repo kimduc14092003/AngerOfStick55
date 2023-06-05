@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunARG
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunARG
   nameOfItem: ARG-170
   description: 
   maxAmount: 242
@@ -22,4 +23,5 @@ MonoBehaviour:
   damage: 1468
   bulletSpeed: 920
   reloadTime: 4
+  priceOfGun: 0
   priceOfABullet: 6

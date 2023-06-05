@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ItemGunGlock
   m_EditorClassIdentifier: Assembly-CSharp::ItemGun
+  id: ItemGunGlock
   nameOfItem: Glock-18
   description: 
   maxAmount: 424
@@ -22,4 +23,5 @@ MonoBehaviour:
   damage: 1266
   bulletSpeed: 1058
   reloadTime: 0.5
+  priceOfGun: 0
   priceOfABullet: 6
