@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isClimb,isBow,isJump, isAttackKick0 = false, isAttackKick1 = false, isAttackPunch = false;
     private bool isFalling=false;
 
-    private CapsuleCollider2D capsuleCollider;
+    [SerializeField] private CapsuleCollider2D capsuleCollider;
     [SerializeField] private LedgeDetection ledgeDetection;
 
     private void Awake()
@@ -30,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Start()
     {
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
         rb = gameObject.GetComponent<Rigidbody2D>();
         isBow = false;
         skeletonAnimation.state.Event += HitEvent;
@@ -80,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Xử lý tấn công 1
-        if (Input.GetKeyDown(KeyCode.K) )
+        if (Input.GetKeyDown(KeyCode.U) )
         {
             isAttackKick0 = true;
             tempTime = Time.time;
@@ -92,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
             tempTime = Time.time;
         }
         // Xử lý tấn công 3
-        if (Input.GetKeyDown(KeyCode.U))
+        if (Input.GetKeyDown(KeyCode.K))
         {
             isAttackKick1 = true;
             tempTime = Time.time;
@@ -140,8 +139,8 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.S)&&!isBow)
             {
                 isBow = true;
-                capsuleCollider.offset += Vector2.up * -0.5f;
-                capsuleCollider.size += Vector2.up * -1f;
+                capsuleCollider.offset = capsuleCollider.offset * 0.5f;
+                capsuleCollider.size = new Vector2( capsuleCollider.size.x,capsuleCollider.size.y*0.5f);
             }
         }
     }
@@ -167,8 +166,8 @@ public class PlayerMovement : MonoBehaviour
         if (isBow)
         {
             isBow = false;
-            capsuleCollider.offset += Vector2.up * 0.5f;
-            capsuleCollider.size += Vector2.up * 1f;
+            capsuleCollider.offset = capsuleCollider.offset * 2;
+            capsuleCollider.size = new Vector2(capsuleCollider.size.x, capsuleCollider.size.y * 2);
         }
     }
 

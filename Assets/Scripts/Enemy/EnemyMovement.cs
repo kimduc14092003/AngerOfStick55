@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Spine.Unity;
 using UnityEngine;
+using Spine.Unity;
 
 public class EnemyMovement : MonoBehaviour
 {
@@ -24,6 +26,7 @@ public class EnemyMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        GetComponent<SkeletonAnimation>().Skeleton.SetColor(Color.red);
     }
 
     private void OnDrawGizmos()
