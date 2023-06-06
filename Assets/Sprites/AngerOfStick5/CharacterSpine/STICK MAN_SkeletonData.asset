@@ -26,9 +26,18 @@ MonoBehaviour:
   skeletonDataModifiers: []
   fromAnimation:
   - RUN
+  - ATK_COMBO_KICK_1
+  - ATK_COMBO_KICK_0
+  - ATK_COMBO_PUNCH
   toAnimation:
   - IDLE
+  - IDLE
+  - IDLE
+  - IDLE
   duration:
+  - 0
+  - 0
+  - 0
   - 0
   defaultMix: 0.1
   controller: {fileID: 9100000, guid: 7c86c1db87f64c24d87776071cf0b439, type: 2}

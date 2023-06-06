@@ -28,6 +28,8 @@
  *****************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Spine {
 	/// <summary>Attachment that displays a texture region using a mesh.</summary>
@@ -38,8 +40,9 @@ namespace Spine {
 		internal int[] triangles;
 		internal float r = 1, g = 1, b = 1, a = 1;
 		internal int hulllength;
+        public List<Vector2> hullVertices;
 
-		public int HullLength { get { return hulllength; } set { hulllength = value; } }
+        public int HullLength { get { return hulllength; } set { hulllength = value; } }
 		public float[] RegionUVs { get { return regionUVs; } set { regionUVs = value; } }
 		/// <summary>The UV pair for each vertex, normalized within the entire texture. <seealso cref="MeshAttachment.UpdateUVs"/></summary>
 		public float[] UVs { get { return uvs; } set { uvs = value; } }

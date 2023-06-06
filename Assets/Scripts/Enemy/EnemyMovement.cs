@@ -31,7 +31,7 @@ public class EnemyMovement : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, radius);
         Gizmos.DrawWireCube(attackZoneTrasform.position, sizeOfAttackZone);
     }
-    private void FixedUpdate()
+    private void Update()
     {
         if (!isFindTarget)
         {
@@ -44,13 +44,17 @@ public class EnemyMovement : MonoBehaviour
             FlipCharacter();
         }
 
-        if(isJumping)
+        if (isJumping)
         {
             if (ledgeDetection.IsCharacterClimb())
             {
                 CharacterClimb();
             }
         }
+    }
+    private void FixedUpdate()
+    {
+        
     }
 
     public void DetectTargetCome()

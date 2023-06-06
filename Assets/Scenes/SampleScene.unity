@@ -478,6 +478,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 250
   jumpingPower: 5
+  delayTimeOfCombo: 0
   groundCheck: {fileID: 1999174634}
   headCheck: {fileID: 1806611224}
   groundLayer:
@@ -490,6 +491,7 @@ MonoBehaviour:
   jumpCount: 0
   offset1: {x: 0.4, y: 2.223563}
   skeletonAnimation: {fileID: 0}
+  bodyTransform: {fileID: 0}
   idleAnim: 
   runAnim: 
   jumpAnim: 
@@ -499,6 +501,9 @@ MonoBehaviour:
   jumpKick2Anim: 
   skillAnim: 
   wrestleAnim: 
+  comboKick0Anim: 
+  comboKick1Anim: 
+  comboPunch: 
   ledgeDetection: {fileID: 1806611225}
 --- !u!1 &105197559
 GameObject:
@@ -947,7 +952,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &383082805
 Rigidbody2D:
   serializedVersion: 4
@@ -1351,6 +1356,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1444,9 +1450,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9046f5c9ba294349920c0affd63d083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 2019363925}
+  target: {fileID: 82717493}
   minPosLeftBottomCamera: {x: -10.95, y: -4.1}
   maxPosLeftBottomCamera: {x: 12.71, y: 5.97}
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e647500a1c25f84b9562ca87e8e3a27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &570000362
 GameObject:
   m_ObjectHideFlags: 0
@@ -3154,6 +3172,7 @@ GameObject:
   - component: {fileID: 1445402203}
   - component: {fileID: 1445402202}
   - component: {fileID: 1445402201}
+  - component: {fileID: 1445402205}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3245,6 +3264,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1445402205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445402200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4080d217cf11604ebd65f9a3840f763, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1465969866
 GameObject:
   m_ObjectHideFlags: 0
@@ -4055,7 +4086,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1999174633}
   m_LocalRotation: {x: -0, y: -0, z: 0.055164363, w: 0.9984773}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.001, y: -0.008, z: 0}
   m_LocalScale: {x: 0.3706971, y: 0.65789485, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4290,7 +4321,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2019363920}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.213, y: -0.834, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4310,8 +4341,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3015955a0fee19d43a097c135519de05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 250
+  speed: 500
   jumpingPower: 5
+  delayTimeOfCombo: 0.3
   groundCheck: {fileID: 1999174634}
   headCheck: {fileID: 1806611224}
   groundLayer:
@@ -4324,6 +4356,7 @@ MonoBehaviour:
   jumpCount: 0
   offset1: {x: 0.4, y: 2.223563}
   skeletonAnimation: {fileID: 2019363922}
+  bodyTransform: {fileID: 82717493}
   idleAnim: IDLE
   runAnim: RUN
   jumpAnim: JUMP
@@ -4333,6 +4366,9 @@ MonoBehaviour:
   jumpKick2Anim: JUMP_KICK_1
   skillAnim: SKILL
   wrestleAnim: WRESTLE
+  comboKick0Anim: ATK_COMBO_KICK_0
+  comboKick1Anim: ATK_COMBO_KICK_1
+  comboPunch: ATK_COMBO_PUNCH
   ledgeDetection: {fileID: 1806611225}
 --- !u!50 &2019363927
 Rigidbody2D:
@@ -4360,7 +4396,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!70 &2019363928
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
