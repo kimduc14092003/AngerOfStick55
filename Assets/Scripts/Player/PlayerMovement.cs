@@ -3,6 +3,7 @@ using Spine.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Animation = Spine.Animation;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -24,24 +25,23 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private CapsuleCollider2D capsuleCollider;
     [SerializeField] private LedgeDetection ledgeDetection;
+    [SerializeField] private GameObject[] attackColliders;
 
-    private void Awake()
-    {
-    }
+    private List<float> listDeltaTimeInAnim;
     private void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         isBow = false;
         skeletonAnimation.state.Event += HitEvent;
         skeletonAnimation.AnimationState.Complete += OnEndAttackCombo;
-
+        listDeltaTimeInAnim = new List<float>();
     }
 
     // Update is called once per frame
     void Update()
     {
         HandlePlayerInput();
-        FlipPlayer();
+        StartCoroutine(FlipPlayer());
         HandleCharacterClimbAndMove();
         HandlePlayerAnimation();
         IsCharacterOnGround();
@@ -60,10 +60,28 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawWireSphere(groundCheck.position, 0.2f);
     }
 
+    public void ClickJ()
+    {
+        isAttackPunch = true;
+        tempTime = Time.time;
+    }
+
+    public void ClickK()
+    {
+        isAttackKick1 = true;
+        tempTime = Time.time;
+    }
+
+    public void ClickU()
+    {
+        isAttackKick0 = true;
+        tempTime = Time.time;
+    }
+
     private void HandlePlayerInput()
     {
         // Xử lý di chuyển trái phải 
-        horizontalValue = Input.GetAxis("Horizontal");
+        horizontalValue = Input.GetAxisRaw("Horizontal");
         if (horizontalValue > 0)
         {
             StopBow();
@@ -132,9 +150,9 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
-        else
+        //else
         // Xử lý cúi người
-        if (!isClimb)
+        /*if (!isClimb)
         {
             if (Input.GetKeyDown(KeyCode.S)&&!isBow)
             {
@@ -142,15 +160,39 @@ public class PlayerMovement : MonoBehaviour
                 capsuleCollider.offset = capsuleCollider.offset * 0.5f;
                 capsuleCollider.size = new Vector2( capsuleCollider.size.x,capsuleCollider.size.y*0.5f);
             }
-        }
+        }*/
     }
 
     private void OnEndAttackCombo(TrackEntry trackEntry)
     {
-        transform.position = new Vector3(bodyTransform.position.x, transform.position.y);
-        isAttackKick0 = false;
-        isAttackKick1 = false;
-        isAttackPunch = false;
+        string[] listAttackEntry = new string[] {comboKick0Anim,comboKick1Anim,comboPunch };
+        for(int i = 0; i < listAttackEntry.Length; i++)
+        {
+            if (listAttackEntry[i] == trackEntry.ToString())
+            {
+                StartCoroutine(MoveToNewPos());
+            }
+        }
+    }
+
+    private IEnumerator MoveToNewPos()
+    {
+        Vector3 target = new(bodyTransform.position.x, transform.position.y, transform.position.z);
+        CheckAndStopAllCombo();
+        //10 điểm cho việc chờ 1 frame
+        yield return 0;
+        transform.position = target;
+    }
+
+    private void CheckAndStopAllCombo()
+    {
+        if (isAttackKick0 || isAttackKick1 || isAttackPunch)
+        {
+            isAttackKick0 = false;
+            isAttackKick1 = false;
+            isAttackPunch = false;
+        }
+       
     }
     private void StartJump()
     {
@@ -163,24 +205,37 @@ public class PlayerMovement : MonoBehaviour
 
     private void StopBow()
     {
-        if (isBow)
+        /*if (isBow)
         {
             isBow = false;
             capsuleCollider.offset = capsuleCollider.offset * 2;
             capsuleCollider.size = new Vector2(capsuleCollider.size.x, capsuleCollider.size.y * 2);
-        }
+        }*/
     }
 
-    private void FlipPlayer()
+    private IEnumerator FlipPlayer()
     {
         if(isFacingRight)
         {
-            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            if(transform.rotation!=Quaternion.Euler(0f, 0f, 0f))
+            {
+                CheckAndStopAllCombo();
+                StartCoroutine (MoveToNewPos());
+                yield return 0;
+                transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            }
         }
         else
         {
-            transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            if (transform.rotation.y != -1&& transform.rotation.y != 1)
+            {
+                CheckAndStopAllCombo();
+                StartCoroutine(MoveToNewPos());
+                yield return 0;
+                transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            }
         }
+        yield return null;
     }
 
     private void HandleCharacterClimbAndMove()
@@ -190,7 +245,7 @@ public class PlayerMovement : MonoBehaviour
         if (!isClimb)
         {
             //Xử lý di chuyển trái phải cho player 
-            if (horizontalValue != 0)
+            if (horizontalValue != 0&& !isAttackKick0 && !isAttackKick1 && !isAttackPunch )
             {
                 rb.velocity = new Vector2(horizontalValue * speed*Time.deltaTime, rb.velocity.y);
             }
@@ -235,13 +290,18 @@ public class PlayerMovement : MonoBehaviour
         if (isAttackKick0)
         {
             if (skeletonAnimation.AnimationState.ToString() != comboKick0Anim)
+            {
                 skeletonAnimation.AnimationState.SetAnimation(0, comboKick0Anim, false);
+
+            }
         }
         else
         if (isAttackKick1)
         {
             if (skeletonAnimation.AnimationState.ToString() != comboKick1Anim)
+            {
                 skeletonAnimation.AnimationState.SetAnimation(0, comboKick1Anim, false);
+            }
         }
         else
         if (isAttackPunch)
@@ -263,16 +323,68 @@ public class PlayerMovement : MonoBehaviour
             if (skeletonAnimation.AnimationState.ToString() != idleAnim)
                 skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
         }
+
+        GetListDeltaTimeOfEvent(skeletonAnimation.AnimationState.ToString());
     }
 
     private void HitEvent(TrackEntry trackEntry, Spine.Event e)
     {
-        Debug.Log(e.Data);
-        if (tempTime+delayTimeOfCombo<Time.time)
+        for(int i = 0; i < attackColliders.Length; i++)
         {
-            skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0f);
-            OnEndAttackCombo(new TrackEntry());
+            attackColliders[i].SetActive(true);
+            StartCoroutine(TurnOffAttackColliders(i));
         }
+        if (e.Data.Name == "hit")
+        {
+            float deltaTime = 0;
+            for (int i=0;i<listDeltaTimeInAnim.Count;i++)
+            {
+                if (e.Time == listDeltaTimeInAnim[i])
+                {
+                    try
+                    {
+                        deltaTime = listDeltaTimeInAnim[i + 1] - listDeltaTimeInAnim[i];
+
+                    }
+                    catch
+                    {
+                        deltaTime =
+                        trackEntry.AnimationEnd - listDeltaTimeInAnim[i];
+                    }
+                    break;
+                }
+            }
+            if (tempTime+ deltaTime < Time.time)
+            {
+               // skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0f);
+                OnEndAttackCombo(trackEntry);
+            }
+        }
+    }
+    public void GetListDeltaTimeOfEvent(string animationName)
+    {
+        listDeltaTimeInAnim.Clear();
+        var skeletonData = skeletonAnimation.Skeleton.Data;
+        var animation = skeletonData.FindAnimation(animationName);
+
+        foreach (var timeline in animation.Timelines)
+        {
+            var eventTimeline = timeline as Spine.EventTimeline;
+            if (eventTimeline != null)
+            {
+                foreach (var spineEvent in eventTimeline.Events)
+                {
+                    listDeltaTimeInAnim.Add(spineEvent.Time);
+                }
+            }
+        }
+
+    }
+
+    private IEnumerator TurnOffAttackColliders(int index)
+    {
+        yield return new WaitForSeconds(0.1f);
+        attackColliders[index].SetActive(false);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

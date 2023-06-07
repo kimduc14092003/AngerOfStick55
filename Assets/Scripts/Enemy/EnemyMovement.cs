@@ -1,8 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Spine.Unity;
 using UnityEngine;
-using Spine.Unity;
 
 public class EnemyMovement : MonoBehaviour
 {
@@ -14,7 +13,12 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float jumpPower;
     [SerializeField] private LedgeDetection ledgeDetection;
     [SerializeField] private Vector2 offset1;
+    [SerializeField] private CapsuleCollider2D capsuleCollider;
 
+    [SpineAnimation]
+    public string idleAnim, runAnim, jumpAnim, hitAnim, deadAnim;
+    private SkeletonAnimation skeletonAnimation;
+                
     private Rigidbody2D rb;
     private bool isFindTarget;
     private GameObject target;
@@ -22,11 +26,14 @@ public class EnemyMovement : MonoBehaviour
     private bool isTargetInLeft=true;
     private bool isJumping;
     private bool isClimbing;
-
+    private float maxHealth=100;
+    private float currentHealth;
+    public float thrust;
     private void Start()
     {
+        currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
-        GetComponent<SkeletonAnimation>().Skeleton.SetColor(Color.red);
+        skeletonAnimation= GetComponent<SkeletonAnimation>();
     }
 
     private void OnDrawGizmos()
@@ -155,6 +162,17 @@ public class EnemyMovement : MonoBehaviour
         isClimbing = false;
         rb.gravityScale = 1;
     }
+    // Xử lý khi enemy nhận dame và chết
+    public void HandleDameTaken(float dame)
+    {
+        this.currentHealth -= dame;
+        if(this.currentHealth <= 0)
+        {
+            skeletonAnimation.AnimationState.SetAnimation(0, deadAnim, false);
+            capsuleCollider.gameObject.SetActive(false);
+            rb.gravityScale = 0;
+        }
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -164,5 +182,30 @@ public class EnemyMovement : MonoBehaviour
             CharacterJump();
         }
         
+        
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "PlayerMakeDamage")
+        {
+            skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
+            skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true,0.1f);
+            HandleDameTaken(10);
+
+            Vector2 directionForce= transform.position- collision.transform.position;
+            directionForce= directionForce.normalized* thrust;
+
+            rb.AddForce(directionForce,ForceMode2D.Impulse);
+            StartCoroutine(KnockCo());
+            Debug.Log(directionForce);
+        }
+
+
+    }
+
+    private IEnumerator KnockCo()
+    {
+        yield return new WaitForSeconds(0.5f);
+        rb.velocity = Vector2.zero;
     }
 }

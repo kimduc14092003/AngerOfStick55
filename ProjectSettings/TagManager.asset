@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - box
+  - PlayerMakeDamage
   layers:
   - Default
   - TransparentFX
@@ -16,7 +17,7 @@ TagManager:
   - climbPoint
   - Player
   - Enemy
-  - 
+  - PlayerAttack
   - 
   - 
   - 
