@@ -14,6 +14,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private LedgeDetection ledgeDetection;
     [SerializeField] private Vector2 offset1;
     [SerializeField] private CapsuleCollider2D capsuleCollider;
+    [SerializeField] private float health;
 
     [SpineAnimation]
     public string idleAnim, runAnim, jumpAnim, hitAnim, deadAnim;
@@ -26,12 +27,10 @@ public class EnemyMovement : MonoBehaviour
     private bool isTargetInLeft=true;
     private bool isJumping;
     private bool isClimbing;
-    private float maxHealth=100;
-    private float currentHealth;
+    private bool isDead=false;
     public float thrust;
     private void Start()
     {
-        currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         skeletonAnimation= GetComponent<SkeletonAnimation>();
     }
@@ -165,9 +164,10 @@ public class EnemyMovement : MonoBehaviour
     // Xử lý khi enemy nhận dame và chết
     public void HandleDameTaken(float dame)
     {
-        this.currentHealth -= dame;
-        if(this.currentHealth <= 0)
+        this.health -= dame;
+        if(this.health <= 0)
         {
+            isDead = true;
             skeletonAnimation.AnimationState.SetAnimation(0, deadAnim, false);
             capsuleCollider.gameObject.SetActive(false);
             rb.gravityScale = 0;
@@ -181,23 +181,25 @@ public class EnemyMovement : MonoBehaviour
             isJumping = true;
             CharacterJump();
         }
-        
-        
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "PlayerMakeDamage")
+        if (!isDead)
         {
-            skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
-            skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true,0.1f);
-            HandleDameTaken(10);
+            if (collision.gameObject.tag == "PlayerMakeDamage")
+            {
+               /* skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
+                skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true,0.1f);
+                HandleDameTaken(10);
 
-            Vector2 directionForce= transform.position- collision.transform.position;
-            directionForce= directionForce.normalized* thrust;
+                Vector2 directionForce= transform.position- collision.transform.parent.root.position;
+                directionForce= directionForce.normalized;
 
-            rb.AddForce(directionForce,ForceMode2D.Impulse);
-            StartCoroutine(KnockCo());
-            Debug.Log(directionForce);
+                rb.AddForce(directionForce * thrust,ForceMode2D.Impulse);
+                StartCoroutine(KnockCo());
+               */
+            }
         }
 
 

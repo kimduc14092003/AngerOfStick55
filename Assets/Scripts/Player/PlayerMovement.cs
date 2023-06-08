@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     [SerializeField] private float speed,jumpingPower, delayTimeOfCombo;
     [SerializeField] private Transform groundCheck,headCheck;
-    [SerializeField] private LayerMask groundLayer,climbPointLayer;
+    [SerializeField] private LayerMask groundLayer,climbPointLayer,enemyLayer;
     [SerializeField] private int jumpMax, jumpCount;
     [SerializeField] private Vector2 offset1;
     [SerializeField] private SkeletonAnimation skeletonAnimation;
@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
 
     private float horizontalValue,tempTime;
     private bool isFacingRight;
-    private bool isClimb,isBow,isJump, isAttackKick0 = false, isAttackKick1 = false, isAttackPunch = false;
+    private bool isClimb,isBow,isJump, isAttackKick0 = false, isAttackKick1 = false, isAttackPunch = false, isThrowEnemy,isThrowOnce=true;
     private bool isFalling=false;
 
     [SerializeField] private CapsuleCollider2D capsuleCollider;
@@ -34,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
         isBow = false;
         skeletonAnimation.state.Event += HitEvent;
         skeletonAnimation.AnimationState.Complete += OnEndAttackCombo;
+        skeletonAnimation.AnimationState.End += OnEndAttackCombo;
         listDeltaTimeInAnim = new List<float>();
     }
 
@@ -55,9 +56,15 @@ public class PlayerMovement : MonoBehaviour
             jumpCount = jumpMax;
         };
     }
+
+    private bool IsCanThrowEnemy()
+    {
+        return Physics2D.OverlapCircle(attackColliders[1].transform.position, 0.5f, enemyLayer);
+    }
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(groundCheck.position, 0.2f);
+        Gizmos.DrawWireSphere(attackColliders[1].transform.position, 0.5f);
     }
 
     public void ClickJ()
@@ -97,33 +104,49 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Xử lý tấn công 1
-        if (Input.GetKeyDown(KeyCode.U) )
+        if (Input.GetKeyDown(KeyCode.U)&&!isJump )
         {
             isAttackKick0 = true;
+            isAttackKick1 = false;
+            isAttackPunch = false;
             tempTime = Time.time;
         }
         // Xử lý tấn công 2
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J) && !isJump)
         {
             isAttackPunch = true;
+            isAttackKick1 = false;
+            isAttackKick0 = false;
             tempTime = Time.time;
         }
         // Xử lý tấn công 3
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K) && !isJump)
         {
             isAttackKick1 = true;
+            isAttackPunch = false;
+            isAttackKick0 = false;
             tempTime = Time.time;
         }
         // Xử lý sự kiện nhảy của Player
         if (Input.GetButtonDown("Jump"))
         {
             StopBow();
-            Invoke("StartJump", 0.3f);
+            StartJump();
         }
 
         if (rb.velocity.y > 0)
         {
             isJump = true;
+        }
+        // Xử lý sự kiện nhảy đá 1
+        if(isJump&& Input.GetKeyDown(KeyCode.J))
+        {
+            Debug.Log("Jump Kick 1");
+        }
+        // Xử lý sự kiện nhảy đá 2
+        if (isJump && Input.GetKeyDown(KeyCode.K))
+        {
+            Debug.Log("Jump Kick 2");
         }
         // Xử lý khi người chơi đang leo
         if (isClimb)
@@ -171,6 +194,8 @@ public class PlayerMovement : MonoBehaviour
             if (listAttackEntry[i] == trackEntry.ToString())
             {
                 StartCoroutine(MoveToNewPos());
+                Debug.Log("End Anim"+trackEntry);
+
             }
         }
     }
@@ -194,6 +219,7 @@ public class PlayerMovement : MonoBehaviour
         }
        
     }
+
     private void StartJump()
     {
         if (jumpCount > 0)
@@ -221,8 +247,15 @@ public class PlayerMovement : MonoBehaviour
             {
                 CheckAndStopAllCombo();
                 StartCoroutine (MoveToNewPos());
+                isThrowEnemy= IsCanThrowEnemy();
                 yield return 0;
                 transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                for (int i = 0; i < attackColliders.Length; i++)
+                {
+                    attackColliders[i].SetActive(true);
+                    StartCoroutine(TurnOffAttackColliders(i));
+                }
+                ThrowEnemy();
             }
         }
         else
@@ -231,8 +264,15 @@ public class PlayerMovement : MonoBehaviour
             {
                 CheckAndStopAllCombo();
                 StartCoroutine(MoveToNewPos());
+                isThrowEnemy = IsCanThrowEnemy();
                 yield return 0;
                 transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+                for (int i = 0; i < attackColliders.Length; i++)
+                {
+                    attackColliders[i].SetActive(true);
+                    StartCoroutine(TurnOffAttackColliders(i));
+                }
+                ThrowEnemy();
             }
         }
         yield return null;
@@ -242,7 +282,7 @@ public class PlayerMovement : MonoBehaviour
     {
         SetIsClimbValue(ledgeDetection.IsCharacterClimb());
 
-        if (!isClimb)
+        if (!isClimb&&!isThrowEnemy)
         {
             //Xử lý di chuyển trái phải cho player 
             if (horizontalValue != 0&& !isAttackKick0 && !isAttackKick1 && !isAttackPunch )
@@ -267,7 +307,25 @@ public class PlayerMovement : MonoBehaviour
         isFalling = false;
     }
 
-
+    private void ThrowEnemy()
+    {
+        if (isThrowEnemy)
+        {
+            if (isThrowOnce)
+            {
+                transform.localScale =new Vector3(transform.localScale.x*-1, transform.localScale.y,transform.localScale.z);
+                Invoke("ThrowEnemyDone", 0.8f);
+                print("Throw Enemy");
+                isThrowOnce = false;
+            }
+        }
+    }
+    private void ThrowEnemyDone()
+    {
+        isThrowEnemy=false;
+        transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+        isThrowOnce=true;
+    }
 
     private void SetIsClimbValue(bool value)
     {
@@ -285,6 +343,15 @@ public class PlayerMovement : MonoBehaviour
             {
                 skeletonAnimation.AnimationState.SetAnimation(0, jumpAnim, false);
             };
+        }
+        else
+        if (isThrowEnemy)
+        {
+            if (skeletonAnimation.AnimationState.ToString() != wrestleAnim)
+            {
+                print(skeletonAnimation.AnimationState.ToString());
+                skeletonAnimation.AnimationState.SetAnimation(0, wrestleAnim, false);
+            }
         }
         else
         if (isAttackKick0)
@@ -343,20 +410,19 @@ public class PlayerMovement : MonoBehaviour
                 {
                     try
                     {
-                        deltaTime = listDeltaTimeInAnim[i + 1] - listDeltaTimeInAnim[i];
+                        deltaTime = listDeltaTimeInAnim[i] - listDeltaTimeInAnim[i-1];
 
                     }
                     catch
                     {
                         deltaTime =
-                        trackEntry.AnimationEnd - listDeltaTimeInAnim[i];
+                        listDeltaTimeInAnim[i];
                     }
                     break;
                 }
             }
             if (tempTime+ deltaTime < Time.time)
             {
-               // skeletonAnimation.AnimationState.SetEmptyAnimation(0, 0f);
                 OnEndAttackCombo(trackEntry);
             }
         }
@@ -387,8 +453,12 @@ public class PlayerMovement : MonoBehaviour
         attackColliders[index].SetActive(false);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.gameObject.tag == "Enemy")
+        {
+           // isThrowEnemy = true;
+        }
     }
 
 }

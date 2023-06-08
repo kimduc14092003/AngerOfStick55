@@ -49,6 +49,19 @@ public static class ItemData
         { 8, new ItemGunDefault(1130,220,4100) },
         { 9, new ItemGunDefault(1468,242,5100) },
     };
+
+    public static Dictionary<int, ItemGunDefault> GunTavorItemData = new Dictionary<int, ItemGunDefault>()
+    {
+        { 1, new ItemGunDefault(234,110,12000) },
+        { 2, new ItemGunDefault(304,132,150) },
+        { 3, new ItemGunDefault(364,158,450) },
+        { 4, new ItemGunDefault(472,174,900) },
+        { 5, new ItemGunDefault(566,209,1650) },
+        { 6, new ItemGunDefault(678,229,3150) },
+        { 7, new ItemGunDefault(880,252,4650) },
+        { 8, new ItemGunDefault(1056,303,6150) },
+        { 9, new ItemGunDefault(1372,333,7650) },
+    };
 }
 
 public class ItemDefault
