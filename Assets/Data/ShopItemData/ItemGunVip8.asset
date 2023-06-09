@@ -15,13 +15,13 @@ MonoBehaviour:
   id: ItemGunVip8
   nameOfItem: LazerGun
   description: 
-  maxAmount: 182
-  currentAmount: 182
+  maxAmountDefault: 127
   imgDescription: {fileID: 21300000, guid: a81d32c96d03cfa49978ca7d26cf46ca, type: 3}
-  priceToUpgrade: -1
-  currentLevel: 1
-  damage: 400
-  bulletSpeed: 690
-  reloadTime: 2
-  priceOfGun: -1
-  priceOfABullet: 12
+  priceToUpgradeDefault: 145
+  pricePerOneDefault: 111
+  currentLevel: 0
+  damageDefault: 0
+  bulletSpeed: 0
+  reloadTime: 0
+  priceOfGunDefault: 0
+  priceOfABullet: 0

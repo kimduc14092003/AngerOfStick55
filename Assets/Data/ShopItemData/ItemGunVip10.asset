@@ -15,13 +15,13 @@ MonoBehaviour:
   id: ItemGunVip10
   nameOfItem: CSR-776
   description: 
-  maxAmount: 208
-  currentAmount: 208
+  maxAmountDefault: 127
   imgDescription: {fileID: 21300000, guid: ab9370152a50dcf408f58a8df6a4ea7e, type: 3}
-  priceToUpgrade: -1
-  currentLevel: 1
-  damage: 303
-  bulletSpeed: 1012
-  reloadTime: 0.5
-  priceOfGun: -1
-  priceOfABullet: 9
+  priceToUpgradeDefault: 145
+  pricePerOneDefault: 111
+  currentLevel: 0
+  damageDefault: 0
+  bulletSpeed: 0
+  reloadTime: 0
+  priceOfGunDefault: 0
+  priceOfABullet: 0

@@ -15,11 +15,11 @@ MonoBehaviour:
   id: ItemHatchet
   nameOfItem: Hatchet
   description: 
-  maxAmount: 90
-  currentAmount: 90
+  maxAmountDefault: 90
   imgDescription: {fileID: 21300000, guid: ece239c8cd4f6824bbd19c35cc591010, type: 3}
-  priceToUpgrade: 300
-  currentLevel: 1
-  damage: 450
-  priceOfWeapon: 18000
-  priceToFix: 300
+  priceToUpgradeDefault: 97
+  pricePerOneDefault: 0
+  currentLevel: 0
+  damageDefault: 0
+  priceOfWeaponDefault: 0
+  priceToFix: 0

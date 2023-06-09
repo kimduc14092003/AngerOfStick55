@@ -13,13 +13,87 @@ public class WeaponPanelManager : MonoBehaviour
     [SerializeField] private Image chooseItemImage;
     private int currentPageIndex,maxPageIndex;
     private GameObject currentItemChoose=null;
-    // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
         currentPageIndex = 1;
         maxPageIndex = 4;
-        GetDefaultData();
-       
+        SetDefaultDataPlayerPrefs();
+    }
+
+    private void SetDefaultDataPlayerPrefs()
+    {
+        for (int i = 0; i < listData.Count; i++)
+        {
+            try
+            {
+                ItemSO _item = ScriptableObject.CreateInstance<ItemSO>();
+                _item = listData[i];
+
+                ItemGun item2 = (ItemGun)_item;
+                Debug.Log(_item);
+
+            }
+            catch
+            {
+                Debug.Log("Error");
+            }
+            if (!PlayerPrefs.HasKey(listData[i].id + PlayerPrefItemKey.CurrentLevel))
+            {
+                PlayerPrefs.SetInt(listData[i].id + PlayerPrefItemKey.CurrentLevel, listData[i].currentLevel);
+            }
+            if (!PlayerPrefs.HasKey(listData[i].id + PlayerPrefItemKey.MaxAmount))
+            {
+                PlayerPrefs.SetInt(listData[i].id + PlayerPrefItemKey.MaxAmount, listData[i].maxAmountDefault);
+            }
+            if (!PlayerPrefs.HasKey(listData[i].id + PlayerPrefItemKey.CurrentAmount))
+            {
+                PlayerPrefs.SetInt(listData[i].id + PlayerPrefItemKey.CurrentAmount, listData[i].maxAmountDefault);
+            }
+            if (!PlayerPrefs.HasKey(listData[i].id + PlayerPrefItemKey.PricePerOne))
+            {
+                PlayerPrefs.SetInt(listData[i].id + PlayerPrefItemKey.PricePerOne, listData[i].pricePerOneDefault);
+            }
+            if (!PlayerPrefs.HasKey(listData[i].id + PlayerPrefItemKey.PriceToUpgrade))
+            {
+                PlayerPrefs.SetInt(listData[i].id + PlayerPrefItemKey.PriceToUpgrade, listData[i].priceToUpgradeDefault);
+            }
+
+            if (listData[i] is ItemGun)
+            {
+                ItemGun item = (ItemGun)listData[i];
+                if (!PlayerPrefs.HasKey(item.id + PlayerPrefItemKey.Damage))
+                {
+                    PlayerPrefs.SetInt(item.id + PlayerPrefItemKey.Damage, item.damageDefault);
+                }
+            }
+            if (listData[i] is ItemMelee)
+            {
+                ItemMelee item = (ItemMelee)listData[i];
+                if (!PlayerPrefs.HasKey(item.id + PlayerPrefItemKey.Damage))
+                {
+                    PlayerPrefs.SetInt(item.id + PlayerPrefItemKey.Damage, item.damageDefault);
+                }
+            }
+            if (listData[i] is ItemFriend)
+            {
+                ItemFriend item = (ItemFriend)listData[i];
+                if (!PlayerPrefs.HasKey(item.id + PlayerPrefItemKey.Damage))
+                {
+                    PlayerPrefs.SetInt(item.id + PlayerPrefItemKey.Damage, item.damageDefault);
+                }
+                if(!PlayerPrefs.HasKey(item.id+ PlayerPrefItemKey.IsSelected))
+                {
+                    PlayerPrefs.SetInt(item.id + PlayerPrefItemKey.IsSelected, 0);
+                }
+            }
+        }
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        GetDefaultData(true);
     }
     private void StartChooseItem()
     {
@@ -27,7 +101,7 @@ public class WeaponPanelManager : MonoBehaviour
         GetDetailDataOfItem(itemController); 
     }
 
-    private void GetDefaultData()
+    private void GetDefaultData(bool returnFirstItem)
     {
         for(int i = 0; i < listItemPanel.transform.childCount; i++)
         {
@@ -55,11 +129,38 @@ public class WeaponPanelManager : MonoBehaviour
             if (resultFind != null)
             {
                 TMP_Text countTxt = resultFind2.GetComponent<TMP_Text>();
-                countTxt.text = listData[currentIndexOfData].currentAmount + " / " + listData[currentIndexOfData].maxAmount;
+
+                int maxAmount = PlayerPrefs.GetInt(listData[currentIndexOfData].id + PlayerPrefItemKey.MaxAmount, 0);
+                int currentAmount = PlayerPrefs.GetInt(listData[currentIndexOfData].id + PlayerPrefItemKey.CurrentAmount, 0);
+                countTxt.text = currentAmount + " / " + maxAmount;
             }
         }
         currentPageText.text = currentPageIndex + " / " + maxPageIndex;
-        StartChooseItem();
+        CheckAllItemInListIsLock();
+        if (returnFirstItem)
+        {
+            StartChooseItem();
+        }
+    }
+
+    private void CheckAllItemInListIsLock()
+    {
+        for(int i = 0; i < listItemPanel.transform.childCount; i++) 
+        {
+            ItemController itemController = listItemPanel.transform.GetChild(i).GetComponent<ItemController>();
+            string id = itemController.itemId;
+
+            
+            // Kiểm tra xem level có mở khóa chưa
+            if (PlayerPrefs.GetInt(id + PlayerPrefItemKey.CurrentLevel) == 0)
+            {
+                itemController.lockPanel.SetActive(true);
+            }
+            else
+            {
+                itemController.lockPanel.SetActive(false);
+            }
+        }
     }
 
     public void NextPage()
@@ -69,7 +170,7 @@ public class WeaponPanelManager : MonoBehaviour
         {
             currentPageIndex = 1;
         }
-        GetDefaultData();
+        GetDefaultData(true);
     }
 
     public void BackPage()
@@ -79,16 +180,16 @@ public class WeaponPanelManager : MonoBehaviour
         {
             currentPageIndex = maxPageIndex;
         }
-        GetDefaultData();
+        GetDefaultData(true);
     }
 
     public void GetDetailDataOfItem(ItemController itemController)
     {
         //Reset màu button cũ 
-        if(currentItemChoose != null)
+        if (currentItemChoose != null)
         {
-            if(currentItemChoose.GetComponent<Image>())
-            currentItemChoose.GetComponent<Image>().color =new Color32(0,0,0,0);
+            if (currentItemChoose.GetComponent<Image>())
+                currentItemChoose.GetComponent<Image>().color = new Color32(0, 0, 0, 0);
         }
         currentItemChoose = itemController.gameObject;
 
@@ -104,7 +205,7 @@ public class WeaponPanelManager : MonoBehaviour
         ItemSO currentItem = ScriptableObject.CreateInstance<ItemSO>();
 
         // Lọc tìm id của Item trong danh sách dữ liệu
-        for(int i=0;i<listData.Count;i++)
+        for (int i = 0; i < listData.Count; i++)
         {
             if (id == listData[i].id)
             {
@@ -112,46 +213,163 @@ public class WeaponPanelManager : MonoBehaviour
                 break;
             }
         }
+        /*
         //Reset tất cả text thông tin về rỗng
         nameText.text = "";
-        levelText.text = ""; 
+        levelText.text = "";
         damageText.text = "";
         speedText.text = "";
-        amountText.text = ""; 
+        amountText.text = "";
         reloadText.text = "";
 
         //Thay đổi dữ liệu cho item thường
+        int currentLevel = PlayerPrefs.GetInt(id + PlayerPrefItemKey.CurrentLevel, 0);
+        int currentAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.CurrentAmount, 0);
+        int maxAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.MaxAmount, 0);
+
         chooseItemImage.sprite = currentItem.imgDescription;
         nameText.text = currentItem.nameOfItem;
-        levelText.text =currentItem.description;
-        amountText.text = currentItem.nameOfItem + ": " + currentItem.currentAmount + " / " + currentItem.maxAmount;
+        levelText.text = currentItem.description;
+        amountText.text = currentItem.nameOfItem + ": " + currentAmount + " / " + maxAmount;*/
 
         //Thay đổi dữ liệu cho item Gun
-        if (currentItem is ItemGun)
+        if (currentItem is ItemSO)
         {
-            ItemGun itemGun = (ItemGun)currentItem;
-            levelText.text = "LV: " + itemGun.currentLevel;
-            damageText.text = "Damage: " + itemGun.damage;
+            ItemGun itemGun = currentItem as ItemGun;
+            Debug.Log(itemGun);
+           /* if (currentLevel == 0)
+            {
+                levelText.text = "LV: " + ++currentLevel;
+            }
+            else
+            {
+                levelText.text = "LV: " + currentLevel;
+            }
+            damageText.text = "Damage: " + PlayerPrefs.GetInt(id + PlayerPrefItemKey.Damage,0); ;
             speedText.text = "Speed: " + itemGun.bulletSpeed;
-            amountText.text = "Bullet: " + currentItem.currentAmount + " / " + currentItem.maxAmount;
-            reloadText.text = "Reload Time: " + itemGun.reloadTime + "s";
+            amountText.text = "Bullet: " + ": " + currentAmount + " / " + maxAmount;
+            reloadText.text = "Reload Time: " + itemGun.reloadTime + "s";*/
         }
+/*
         //Thay đổi dữ liệu cho item Melee
         if (currentItem is ItemMelee)
         {
-            ItemMelee item = (ItemMelee)currentItem;
-            levelText.text = "LV: " + item.currentLevel;
-            damageText.text = "Damage: " + item.damage;
-            amountText.text = "Bullet: " + currentItem.currentAmount + " / " + currentItem.maxAmount;
+            if (currentLevel == 0)
+            {
+                levelText.text = "LV: " + ++currentLevel;
+            }
+            else
+            {
+                levelText.text = "LV: " + currentLevel;
+            }
+            damageText.text = "Damage: " + PlayerPrefs.GetInt(id + PlayerPrefItemKey.Damage,0); ;
+            amountText.text = "Durability: " + currentAmount + " / " + maxAmount;
         }
         //Thay đổi dữ liệu cho item Friend
         if (currentItem is ItemFriend)
         {
-            ItemFriend item = (ItemFriend)currentItem;
-            levelText.text = "LV: " + item.currentLevel;
-            damageText.text = "Damage: " + item.damage;
-            amountText.text = "HP: " + currentItem.currentAmount + " / " + currentItem.maxAmount;
+            if (currentLevel == 0)
+            {
+                levelText.text = "LV: " + ++currentLevel;
+            }
+            else
+            {
+                levelText.text = "LV: " + currentLevel;
+            }
+            damageText.text = "Damage: " + PlayerPrefs.GetInt(id + PlayerPrefItemKey.Damage,0); ;
+            amountText.text = "HP: " + currentAmount + " / " + maxAmount;
+        }
+*/
+    }
+
+    public void TestUpdateWeapon()
+    {
+        string id = currentItemChoose.GetComponent<ItemController>().itemId;
+        ItemSO currentItem = ScriptableObject.CreateInstance<ItemSO>();
+
+        // Lọc tìm id của Item trong danh sách dữ liệu
+        for (int i = 0; i < listData.Count; i++)
+        {
+            if (id == listData[i].id)
+            {
+                currentItem = listData[i];
+                break;
+            }
+        }
+        
+        int currentLevel = PlayerPrefs.GetInt(id + PlayerPrefItemKey.CurrentLevel);
+        PlayerPrefs.SetInt(id + PlayerPrefItemKey.CurrentLevel, ++currentLevel);
+
+        switch (id)
+        {
+            case "ItemHealth":
+                {
+                    int maxAmount= PlayerPrefs.GetInt(id + PlayerPrefItemKey.MaxAmount);
+                    PlayerPrefs.SetInt(id + PlayerPrefItemKey.MaxAmount, ++maxAmount);
+                    break;
+                }
+            case "ItemSkill":
+                {
+                    int maxAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.MaxAmount);
+                    PlayerPrefs.SetInt(id + PlayerPrefItemKey.MaxAmount, ++maxAmount);
+                    break;
+                }
+            case "ItemMedicine":
+                {
+                    int maxAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.MaxAmount);
+                    maxAmount += 5;
+                    PlayerPrefs.SetInt(id + PlayerPrefItemKey.MaxAmount, maxAmount);
+                    break;
+                }
+            default:
+                {
+                    UpgradeWeapon(currentItem,id, currentLevel);
+                    break;
+                }
+        }
+        GetDefaultData(false);
+    }
+
+    private void UpgradeWeapon(ItemSO item,string id,int currentLevel)
+    {
+
+        if(item as ItemMelee)
+        {
+            ItemMelee _item = (ItemMelee)item;
+            int damage = (int)(_item.damageDefault * StaticData.damageOfGunRate[currentLevel-1]);
+            PlayerPrefs.SetInt(id + PlayerPrefItemKey.Damage, damage);
+        }
+        else
+        if (item as ItemGun)
+        {
+            ItemGun _item = (ItemGun)item;
+            int damage = (int)(_item.damageDefault * StaticData.damageOfGunRate[currentLevel-1]);
+            PlayerPrefs.SetInt(id + PlayerPrefItemKey.Damage, damage);
+        }
+        else if(item as ItemMelee) 
+        {
+            ItemFriend _item = (ItemFriend)item;
+            int damage = (int)(_item.damageDefault * StaticData.damageOfGunRate[currentLevel-1]);
+            PlayerPrefs.SetInt(id + PlayerPrefItemKey.Damage, damage);
         }
 
+        int bullet = (int)(item.maxAmountDefault * StaticData.bulletOfGunRate[currentLevel-1]);
+        PlayerPrefs.SetInt(id + PlayerPrefItemKey.MaxAmount, bullet);
+
+        int priceToUpgrade = (int)(item.priceToUpgradeDefault * StaticData.priceOfGunUpgradeRate[currentLevel-1]);
+        PlayerPrefs.SetInt(id + PlayerPrefItemKey.PriceToUpgrade, priceToUpgrade);
+        
     }
+
+}
+
+public enum PlayerPrefItemKey
+{
+    CurrentLevel,
+    MaxAmount,
+    CurrentAmount,
+    PricePerOne,
+    PriceToUpgrade,
+    Damage,
+    IsSelected
 }

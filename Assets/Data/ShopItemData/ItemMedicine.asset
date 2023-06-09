@@ -15,8 +15,8 @@ MonoBehaviour:
   id: ItemMedicine
   nameOfItem: Medicine Bottle
   description: ( You can be cured with medicine bottle when infected by Zombie )
-  maxAmount: 5
-  currentAmount: 5
+  maxAmountDefault: 5
   imgDescription: {fileID: 21300000, guid: 348387c83369e8946acf075d9771c7a6, type: 3}
-  priceToUpgrade: 220
+  priceToUpgradeDefault: 45
+  pricePerOneDefault: 12
   currentLevel: 1

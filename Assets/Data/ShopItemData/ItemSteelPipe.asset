@@ -15,11 +15,11 @@ MonoBehaviour:
   id: ItemSteelPipe
   nameOfItem: Steel Pipe
   description: 
-  maxAmount: 40
-  currentAmount: 40
+  maxAmountDefault: 90
   imgDescription: {fileID: 21300000, guid: 059f12b4c6c6f5a4d8ba36a4f2767b55, type: 3}
-  priceToUpgrade: 150
-  currentLevel: 1
-  damage: 288
-  priceOfWeapon: 10000
-  priceToFix: 250
+  priceToUpgradeDefault: 97
+  pricePerOneDefault: 0
+  currentLevel: 0
+  damageDefault: 0
+  priceOfWeaponDefault: 0
+  priceToFix: 0

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,35 +8,34 @@ public class ItemSO : ScriptableObject
     public string id;
     public string nameOfItem;
     public string description;
-    public int maxAmount;
-    public int currentAmount;
+    public int maxAmountDefault;
     public Sprite imgDescription;
-    public int priceToUpgrade;
+    public int priceToUpgradeDefault;// lv 1->2->3 v.v
+    public int pricePerOneDefault;
     public int currentLevel;
-
 }
 [CreateAssetMenu(fileName = "NewItem", menuName = "ShopItem/Gun")]
 public class ItemGun : ItemSO
 {
-    public int damage;
+    public int damageDefault;
     public int bulletSpeed;
     public float reloadTime;
-    public int priceOfGun;
-    public int priceOfABullet;
+    public int priceOfGunDefault; //lv 0 ->1 
+    public int priceOfABullet;// Cố định
 }
 
 [CreateAssetMenu(fileName = "NewItem", menuName = "ShopItem/Melee")]
 public class ItemMelee : ItemSO
 {
-    public int damage;
-    public int priceOfWeapon;
+    public int damageDefault;
+    public int priceOfWeaponDefault;//lv 0 ->1 
     public int priceToFix;
 }
 
 [CreateAssetMenu(fileName = "NewItem", menuName = "ShopItem/Friend")]
 public class ItemFriend :ItemSO
 {
-    public int damage;
+    public int damageDefault;
     public bool isSelected;
-    public int priceOfFriend;
+    public int priceOfFriendDefault;//lv 0 ->1 
 }

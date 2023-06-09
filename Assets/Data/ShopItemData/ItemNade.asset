@@ -15,11 +15,11 @@ MonoBehaviour:
   id: ItemNade
   nameOfItem: Grenade
   description: 
-  maxAmount: 40
-  currentAmount: 40
+  maxAmountDefault: 0
   imgDescription: {fileID: 21300000, guid: 39d70269cdd749a4c8efff7ac108c31b, type: 3}
-  priceToUpgrade: 150
-  currentLevel: 1
-  damage: 288
-  priceOfWeapon: 250
-  priceToFix: 150
+  priceToUpgradeDefault: 0
+  pricePerOneDefault: 0
+  currentLevel: 0
+  damageDefault: 0
+  priceOfWeaponDefault: 0
+  priceToFix: 0

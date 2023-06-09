@@ -15,13 +15,13 @@ MonoBehaviour:
   id: ItemGunVip1
   nameOfItem: ARG-170
   description: 
-  maxAmount: 104
-  currentAmount: 104
+  maxAmountDefault: 127
   imgDescription: {fileID: 21300000, guid: 3c41d01549fcc374295c5dba644175db, type: 3}
-  priceToUpgrade: -1
-  currentLevel: 1
-  damage: 150
-  bulletSpeed: 920
-  reloadTime: 4
-  priceOfGun: -1
-  priceOfABullet: 5
+  priceToUpgradeDefault: 145
+  pricePerOneDefault: 111
+  currentLevel: 0
+  damageDefault: 0
+  bulletSpeed: 0
+  reloadTime: 0
+  priceOfGunDefault: 0
+  priceOfABullet: 0

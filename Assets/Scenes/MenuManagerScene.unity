@@ -2984,10 +2984,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3567849478206846979, guid: fdbe485070d9ba648b24631b3c6f58fb, type: 3}
+      propertyPath: lockPanel
+      value: 
+      objectReference: {fileID: 365703345}
     - target: {fileID: 4575026597808367000, guid: fdbe485070d9ba648b24631b3c6f58fb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1446648513}
+    - target: {fileID: 5283442981844844257, guid: fdbe485070d9ba648b24631b3c6f58fb, type: 3}
+      propertyPath: m_Name
+      value: ImageLock
+      objectReference: {fileID: 0}
+    - target: {fileID: 5283442981844844257, guid: fdbe485070d9ba648b24631b3c6f58fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7236014070945156414, guid: fdbe485070d9ba648b24631b3c6f58fb, type: 3}
       propertyPath: m_Name
       value: ButtonItem (11)
@@ -4896,6 +4908,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 364478788}
   m_CullTransparentMesh: 1
+--- !u!1 &365703345 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7178195723926913845, guid: fdbe485070d9ba648b24631b3c6f58fb, type: 3}
+  m_PrefabInstance: {fileID: 219999726}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &366191153
 GameObject:
   m_ObjectHideFlags: 0
@@ -6277,7 +6294,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 468148680}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1446648513}
+        m_TargetAssemblyTypeName: WeaponPanelManager, Assembly-CSharp
+        m_MethodName: TestUpdateWeapon
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &468148680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8816,6 +8845,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 639621870}
   m_CullTransparentMesh: 1
+--- !u!1 &640418967 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7178195723926913845, guid: fdbe485070d9ba648b24631b3c6f58fb, type: 3}
+  m_PrefabInstance: {fileID: 693258837966483482}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &641185773
 GameObject:
   m_ObjectHideFlags: 0
@@ -16366,8 +16400,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 236.41998, y: 31}
-  m_SizeDelta: {x: 428.84, y: 50}
+  m_AnchoredPosition: {x: 318.55, y: 31}
+  m_SizeDelta: {x: 593.1, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1173289350
 MonoBehaviour:
@@ -30684,6 +30718,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3567849478206846979, guid: fdbe485070d9ba648b24631b3c6f58fb, type: 3}
+      propertyPath: lockPanel
+      value: 
+      objectReference: {fileID: 640418967}
     - target: {fileID: 4575026597808367000, guid: fdbe485070d9ba648b24631b3c6f58fb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1

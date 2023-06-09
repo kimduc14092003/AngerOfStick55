@@ -15,8 +15,8 @@ MonoBehaviour:
   id: ItemHealth
   nameOfItem: LIFE
   description: (LIFE)
-  maxAmount: 2
-  currentAmount: 2
+  maxAmountDefault: 2
   imgDescription: {fileID: 21300000, guid: 51f7c084ecf50a84a8be527f54c06531, type: 3}
-  priceToUpgrade: 480
-  currentLevel: 2
+  priceToUpgradeDefault: 450
+  pricePerOneDefault: 50
+  currentLevel: 1

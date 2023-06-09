@@ -4960,6 +4960,7 @@ GameObject:
   - component: {fileID: 1445402202}
   - component: {fileID: 1445402201}
   - component: {fileID: 1445402205}
+  - component: {fileID: 1445402206}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -5066,6 +5067,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4080d217cf11604ebd65f9a3840f763, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1445402206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445402200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a6353c44ec4a094f9f8ac62f0720673, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BottomLeftPosX: 10
+  BottomLeftPosY: 40
+  GraphLength: 200
+  GraphScale: 10
+  ShowGcCollectedAmount: 1
+  DisableVsync: 1
+  ActivatedOnF2: 1
+  ChooseTargetFrameRate: 2
 --- !u!1 &1465969866
 GameObject:
   m_ObjectHideFlags: 0

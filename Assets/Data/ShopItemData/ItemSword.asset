@@ -15,11 +15,11 @@ MonoBehaviour:
   id: ItemSword
   nameOfItem: Sword
   description: 
-  maxAmount: 50
-  currentAmount: 50
+  maxAmountDefault: 90
   imgDescription: {fileID: 21300000, guid: bb25c4e4bc0360f49a258588926e7635, type: 3}
-  priceToUpgrade: 250
-  currentLevel: 1
-  damage: 324
-  priceOfWeapon: 10000
-  priceToFix: 1500
+  priceToUpgradeDefault: 97
+  pricePerOneDefault: 0
+  currentLevel: 0
+  damageDefault: 0
+  priceOfWeaponDefault: 0
+  priceToFix: 0

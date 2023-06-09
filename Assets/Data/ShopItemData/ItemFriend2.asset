@@ -15,11 +15,11 @@ MonoBehaviour:
   id: ItemFriend2
   nameOfItem: Friend
   description: 
-  maxAmount: 600
-  currentAmount: 600
+  maxAmountDefault: 520
   imgDescription: {fileID: 21300000, guid: 461dffc109da61d4199bb35fcfdb0c98, type: 3}
-  priceToUpgrade: 350
-  currentLevel: 1
-  damage: 490
+  priceToUpgradeDefault: 120
+  pricePerOneDefault: 0
+  currentLevel: 0
+  damageDefault: 0
   isSelected: 0
-  priceOfFriend: 40000
+  priceOfFriendDefault: 0
