@@ -6297,7 +6297,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1446648513}
         m_TargetAssemblyTypeName: WeaponPanelManager, Assembly-CSharp
-        m_MethodName: TestUpdateWeapon
+        m_MethodName: UpdateItem
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7187,7 +7187,7 @@ GameObject:
   - component: {fileID: 530297307}
   - component: {fileID: 530297306}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: TextPrice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20347,6 +20347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   listItemPanel: {fileID: 1265392054}
+  buyAmountButton: {fileID: 1882910619}
   listData:
   - {fileID: 11400000, guid: c6a5c650e85e229408d349e28cf896e7, type: 2}
   - {fileID: 11400000, guid: a72ec53251d22d740b57ba41a6ac200f, type: 2}
@@ -20389,6 +20390,8 @@ MonoBehaviour:
   speedText: {fileID: 1044662735}
   amountText: {fileID: 1173289350}
   reloadText: {fileID: 2092547302}
+  priceToUpgradeText: {fileID: 530297306}
+  priceToReloadText: {fileID: 2066593233}
   chooseItemImage: {fileID: 1500047429}
 --- !u!1 &1488725901
 GameObject:
@@ -26570,7 +26573,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1882910622}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1446648513}
+        m_TargetAssemblyTypeName: WeaponPanelManager, Assembly-CSharp
+        m_MethodName: ReloadAmountItem
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1882910622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28932,7 +28947,7 @@ GameObject:
   - component: {fileID: 2066593234}
   - component: {fileID: 2066593233}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: BuyText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
