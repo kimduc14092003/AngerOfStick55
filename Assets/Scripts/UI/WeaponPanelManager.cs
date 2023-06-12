@@ -1,12 +1,15 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class WeaponPanelManager : MonoBehaviour
 {
-    [SerializeField] private GameObject listItemPanel,buyAmountButton;
+    [SerializeField] private GameObject listItemPanel,playerTeamPanel,buyAmountButton,upgradeButton,nextPageButton,backPageButton;
     [SerializeField] private List<ItemSO> listData;
     [SerializeField] private TMP_Text currentPageText;
     [SerializeField] private TMP_Text nameText, levelText,damageText,speedText,amountText,reloadText;
@@ -14,13 +17,15 @@ public class WeaponPanelManager : MonoBehaviour
     [SerializeField] private Image chooseItemImage;
     private int currentPageIndex,maxPageIndex;
     private GameObject currentItemChoose=null;
-
+    private List<string> listFriendSelected;
     private void Awake()
     {
         currentPageIndex = 1;
         maxPageIndex = 4;
         SetDefaultDataPlayerPrefs();
     }
+
+    
 
     private void SetDefaultDataPlayerPrefs()
     {
@@ -82,6 +87,14 @@ public class WeaponPanelManager : MonoBehaviour
     void Start()
     {
         GetDefaultData(true);
+        SetAnimationDefautl();
+        GetListFriendDefault();
+    }
+
+    private void SetAnimationDefautl()
+    {
+        nextPageButton.transform.DOMoveX(nextPageButton.transform.position.x + 0.2f, 0.35f).SetLoops(-1,LoopType.Restart);
+        backPageButton.transform.DOMoveX(backPageButton.transform.position.x - 0.2f, 0.35f).SetLoops(-1,LoopType.Restart);
     }
     private void StartChooseItem()
     {
@@ -105,7 +118,40 @@ public class WeaponPanelManager : MonoBehaviour
             else
             {
                 listItemPanel.transform.GetChild(i).gameObject.SetActive(true);
-                listItemPanel.transform.GetChild(i).GetComponent<ItemController>().itemId = listData[currentIndexOfData].id;
+                ItemController itemController = listItemPanel.transform.GetChild(i).GetComponent<ItemController>();
+                itemController.itemId = listData[currentIndexOfData].id;
+
+                // Active ô lựa chọn bạn đồng hành
+                if(listData[currentIndexOfData] is ItemFriend)
+                {
+                    if (itemController.checkBoxSelectFriend)
+                    {
+                        itemController.checkBoxSelectFriend.SetActive(true);
+
+                        Toggle toggle = itemController.checkBoxSelectFriend.GetComponent<Toggle>();
+                        // Kiểm tra data hiện đang chọn bạn đồng hành hay không?
+                        if(toggle != null)
+                        {
+                            int intSelectValue= PlayerPrefs.GetInt(itemController.itemId + PlayerPrefItemKey.IsSelected);
+                            if (intSelectValue == 0)
+                            {
+                                toggle.isOn = false;
+                            }
+                            else
+                            {
+                                toggle.isOn= true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+                    if (itemController.checkBoxSelectFriend)
+                    {
+                        itemController.checkBoxSelectFriend.SetActive(false);
+                    }
+                }
             }
             if (resultFind != null)
             {
@@ -143,10 +189,71 @@ public class WeaponPanelManager : MonoBehaviour
             if (PlayerPrefs.GetInt(id + PlayerPrefItemKey.CurrentLevel) == 0)
             {
                 itemController.lockPanel.SetActive(true);
+                itemController.GetComponent<Image>().color = new Color32(115, 114, 114, 198);
+                itemController.checkBoxSelectFriend.SetActive(false);
             }
             else
             {
                 itemController.lockPanel.SetActive(false);
+                itemController.GetComponent<Image>().color = new Color32(0, 0, 0, 0);
+            }
+        }
+    }
+
+    private void GetListFriendDefault()
+    {
+        listFriendSelected = new List<string>();
+        foreach (ItemSO item in listData)
+        {
+            if(item is ItemFriend)
+            {
+                int intSelected= PlayerPrefs.GetInt(item.id +PlayerPrefItemKey.IsSelected);
+                if (intSelected != 0)
+                {
+                    listFriendSelected.Add(item.id);
+                }
+            }
+        }
+        SetListFriendDefaultToPanel();
+    }
+
+    private void SetListFriendDefaultToPanel()
+    {
+        for (int i = 0;i< playerTeamPanel.transform.childCount;i++)
+        {
+            ItemInTeamController item = playerTeamPanel.transform.GetChild(i).GetComponent<ItemInTeamController>();
+            if(item != null)
+            {
+                try
+                {
+                    if (i <= listFriendSelected.Count)
+                    {
+                        item.noFriend.SetActive(false);
+                        item.hasFriend.SetActive(true);
+
+                        ItemFriend itemFriend = ScriptableObject.CreateInstance<ItemFriend>(); ;
+                        foreach (ItemSO item1 in listData)
+                        {
+                            if (listFriendSelected[i - 1] == item1.id)
+                            {
+                                itemFriend = item1 as ItemFriend;
+                                break;
+                            }
+                        }
+                        item.imgThumb.sprite = itemFriend.imgDescription;
+                        item.friendLevel.text="Lv "+ PlayerPrefs.GetInt(itemFriend.id +PlayerPrefItemKey.CurrentLevel)+"";
+                    }
+                    else
+                    {
+                        item.noFriend.SetActive(true);
+                        item.hasFriend.SetActive(false);
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.Log("No Friend!");
+                }
+
             }
         }
     }
@@ -181,12 +288,16 @@ public class WeaponPanelManager : MonoBehaviour
         }
         currentItemChoose = itemController.gameObject;
 
+        //Kiểm tra lại item background đã đúng chưa
+        CheckAllItemInListIsLock();
+
         //Thay đổi màu button mới
         if (currentItemChoose.GetComponent<Image>() != null)
         {
             currentItemChoose.GetComponent<Image>().color = new Color32(26, 255, 123, 65);
         }
 
+        int maxLevelItem;
 
         string id = itemController.itemId;
 
@@ -224,7 +335,7 @@ public class WeaponPanelManager : MonoBehaviour
 
 
         // Kiểm tra số lượng còn lại đã full hay chưa
-        if (currentAmount<maxAmount)
+        if (currentAmount<maxAmount || currentLevel==0)
         {
             buyAmountButton.SetActive(true);
         }
@@ -237,62 +348,125 @@ public class WeaponPanelManager : MonoBehaviour
             if (currentLevel == 0)
             {
                 levelText.text = "LV: " + ++currentLevel;
+                priceToReload = itemGun.priceOfGunDefault;
             }
             else
             {
                 levelText.text = "LV: " + currentLevel;
+                int amountOfItemReload = maxAmount - currentAmount;
+                priceToReload *= amountOfItemReload;
             }
             damageText.text = "Damage: " + PlayerPrefs.GetInt(id + PlayerPrefItemKey.Damage, 0); ;
             speedText.text = "Speed: " + itemGun.bulletSpeed;
             amountText.text = "Bullet: " + ": " + currentAmount + " / " + maxAmount;
             reloadText.text = "Reload Time: " + itemGun.reloadTime + "s";
 
-            int amountOfItemReload = maxAmount - currentAmount;
-            priceToReload*= amountOfItemReload;
+           
         }
 
         //Thay đổi dữ liệu cho item Melee
         if (currentItem is ItemMelee)
         {
+            ItemMelee item = currentItem as ItemMelee;
             if (currentLevel == 0)
             {
                 levelText.text = "LV: " + ++currentLevel;
+                priceToReload = item.priceOfWeaponDefault;
+
             }
             else
             {
                 levelText.text = "LV: " + currentLevel;
+                int amountOfItemReload = maxAmount - currentAmount;
+                priceToReload *= amountOfItemReload;
             }
             damageText.text = "Damage: " + PlayerPrefs.GetInt(id + PlayerPrefItemKey.Damage, 0); ;
             amountText.text = "Durability: " + currentAmount + " / " + maxAmount;
             
-            int amountOfItemReload = maxAmount - currentAmount;
-            priceToReload *= amountOfItemReload;
+
         }
         //Thay đổi dữ liệu cho item Friend
         if (currentItem is ItemFriend)
         {
+            ItemFriend item = currentItem as ItemFriend;
+
             if (currentLevel == 0)
             {
                 levelText.text = "LV: " + ++currentLevel;
+                priceToReload = item.priceOfFriendDefault;
             }
             else
             {
                 levelText.text = "LV: " + currentLevel;
+                int amountOfItemReload = maxAmount - currentAmount;
+                priceToReload *= amountOfItemReload;
             }
             damageText.text = "Damage: " + PlayerPrefs.GetInt(id + PlayerPrefItemKey.Damage, 0); ;
             amountText.text = "HP: " + currentAmount + " / " + maxAmount;
 
-            int amountOfItemReload = maxAmount - currentAmount;
-            priceToReload *= amountOfItemReload;
+           
         }
 
+
         //Thay đổi dữ liệu cho button mua/ nâng cấp
-        priceToUpgradeText.text = priceToUpgrade + "";
-        priceToReloadText.text = priceToReload + "";
+        priceToUpgradeText.text = string.Format("{0:N0}", priceToUpgrade);
+        priceToReloadText.text = string.Format("{0:N0}", priceToReload);
 
         // Kiểm tra xem đã max level nâng cấp chưa
+        if(IsItemMaxLevel(id, currentLevel))
+        {
+            upgradeButton.SetActive(false);
+        }
+        else
+        {
+            upgradeButton.SetActive(true);
+        }
 
+    }
 
+    private bool IsItemMaxLevel(string id,int currentLevel)
+    {
+        switch (id)
+        {
+            case "ItemHealth":
+                {
+                    int maxLevel = StaticData.healthPriceToUpgradeRate.Length;
+                    if (currentLevel >= maxLevel)
+                    {
+                        return true;
+                    }
+                    break;
+                }
+            case "ItemSkill":
+                {
+                    int maxLevel = StaticData.skillPriceToUpgradeRate.Length;
+                    if (currentLevel >= maxLevel)
+                    {
+                        return true;
+                    }
+                    break;
+                }
+            case "ItemMedicine":
+                {
+                    int maxLevel = StaticData.medicinePriceToUpgradeRate.Length;
+                    if (currentLevel >= maxLevel)
+                    {
+                        return true;
+                    }
+                    break;
+                }
+            default:
+                {
+                    int maxLevel = StaticData.priceOfGunUpgradeRate.Length;
+                    if (currentLevel >= maxLevel+1)
+                    {
+                        return true;
+                    }
+                    break;
+                }
+        }
+
+        return false;
     }
 
     public void UpdateItem()
@@ -319,12 +493,18 @@ public class WeaponPanelManager : MonoBehaviour
                 {
                     int maxAmount= PlayerPrefs.GetInt(id + PlayerPrefItemKey.MaxAmount);
                     PlayerPrefs.SetInt(id + PlayerPrefItemKey.MaxAmount, ++maxAmount);
+
+                    int priceToUpgrade = (int)(currentItem.priceToUpgradeDefault * StaticData.healthPriceToUpgradeRate[currentLevel - 1]);
+                    PlayerPrefs.SetInt(id + PlayerPrefItemKey.PriceToUpgrade, priceToUpgrade);
                     break;
                 }
             case "ItemSkill":
                 {
                     int maxAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.MaxAmount);
                     PlayerPrefs.SetInt(id + PlayerPrefItemKey.MaxAmount, ++maxAmount);
+
+                    int priceToUpgrade = (int)(currentItem.priceToUpgradeDefault * StaticData.skillPriceToUpgradeRate[currentLevel - 1]);
+                    PlayerPrefs.SetInt(id + PlayerPrefItemKey.PriceToUpgrade, priceToUpgrade);
                     break;
                 }
             case "ItemMedicine":
@@ -332,6 +512,9 @@ public class WeaponPanelManager : MonoBehaviour
                     int maxAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.MaxAmount);
                     maxAmount += 5;
                     PlayerPrefs.SetInt(id + PlayerPrefItemKey.MaxAmount, maxAmount);
+
+                    int priceToUpgrade = (int)(currentItem.priceToUpgradeDefault * StaticData.skillPriceToUpgradeRate[currentLevel - 1]);
+                    PlayerPrefs.SetInt(id + PlayerPrefItemKey.PriceToUpgrade, priceToUpgrade);
                     break;
                 }
             default:
@@ -340,21 +523,6 @@ public class WeaponPanelManager : MonoBehaviour
                     break;
                 }
         }
-        GetDefaultData(false);
-        GetDetailDataOfItem(currentItemChoose.GetComponent<ItemController>());
-    }
-
-    public void ReloadAmountItem()
-    {
-        string id = currentItemChoose.GetComponent<ItemController>().itemId;
-
-        int currentAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.CurrentAmount, 0);
-        int maxAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.MaxAmount, 0);
-
-        //Reload Lại toàn bộ số lượng còn lại
-        PlayerPrefs.SetInt(id + PlayerPrefItemKey.CurrentAmount, maxAmount);
-
-        //Load lại dữ liệu trang và chi tiết sản phẩm hiện tại
         GetDefaultData(false);
         GetDetailDataOfItem(currentItemChoose.GetComponent<ItemController>());
     }
@@ -375,19 +543,84 @@ public class WeaponPanelManager : MonoBehaviour
             int damage = (int)(_item.damageDefault * StaticData.damageOfGunRate[currentLevel-1]);
             PlayerPrefs.SetInt(id + PlayerPrefItemKey.Damage, damage);
         }
-        else if(item as ItemMelee) 
+        else if(item as ItemFriend) 
         {
             ItemFriend _item = (ItemFriend)item;
             int damage = (int)(_item.damageDefault * StaticData.damageOfGunRate[currentLevel-1]);
             PlayerPrefs.SetInt(id + PlayerPrefItemKey.Damage, damage);
+            GetListFriendDefault();
         }
 
-        int bullet = (int)(item.maxAmountDefault * StaticData.bulletOfGunRate[currentLevel-1]);
-        PlayerPrefs.SetInt(id + PlayerPrefItemKey.MaxAmount, bullet);
-
-        int priceToUpgrade = (int)(item.priceToUpgradeDefault * StaticData.priceOfGunUpgradeRate[currentLevel-1]);
-        PlayerPrefs.SetInt(id + PlayerPrefItemKey.PriceToUpgrade, priceToUpgrade);
+        // Cập nhật giá nâng cấp vũ khí
+        try
+        {
+            int priceToUpgrade = (int)(item.priceToUpgradeDefault * StaticData.priceOfGunUpgradeRate[currentLevel-1]);
+            PlayerPrefs.SetInt(id + PlayerPrefItemKey.PriceToUpgrade, priceToUpgrade);
+        }
+        catch (System.Exception e)
+        {
+            upgradeButton.SetActive(false);
+        }
         
+        // Cập nhật giá mua đạn
+        try
+        {
+            int bullet = (int)(item.maxAmountDefault * StaticData.bulletOfGunRate[currentLevel-1]);
+            PlayerPrefs.SetInt(id + PlayerPrefItemKey.MaxAmount, bullet);
+
+        }catch (System.Exception e)
+        {
+            buyAmountButton.SetActive(false);
+        }
+
+    }
+
+    public void ReloadAmountItem()
+    {
+        string id = currentItemChoose.GetComponent<ItemController>().itemId;
+        int currentLevel = PlayerPrefs.GetInt(id + PlayerPrefItemKey.CurrentLevel);
+        if (currentLevel == 0)
+        {
+            PlayerPrefs.SetInt(id + PlayerPrefItemKey.CurrentLevel,++currentLevel);
+        }
+        int currentAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.CurrentAmount, 0);
+        int maxAmount = PlayerPrefs.GetInt(id + PlayerPrefItemKey.MaxAmount, 0);
+
+        //Reload Lại toàn bộ số lượng còn lại
+        PlayerPrefs.SetInt(id + PlayerPrefItemKey.CurrentAmount, maxAmount);
+
+        //Load lại dữ liệu trang và chi tiết sản phẩm hiện tại
+        GetDefaultData(false);
+        GetDetailDataOfItem(currentItemChoose.GetComponent<ItemController>());
+    }
+
+    public void ToggleSelectFriend(ItemController itemController)
+    {
+        Toggle toggle = itemController.checkBoxSelectFriend.GetComponent<Toggle>();
+        if(toggle != null) 
+        {
+            if (listFriendSelected.Count >= 3)
+            {
+                toggle.isOn = false;
+                bool isSelected = toggle.isOn;
+                int intSelected = isSelected ? 1 : 0;
+
+                PlayerPrefs.SetInt(itemController.itemId + PlayerPrefItemKey.IsSelected, intSelected);
+            }
+            else
+            {
+                bool isSelected = toggle.isOn;
+                int intSelected= isSelected? 1:0;
+
+                PlayerPrefs.SetInt(itemController.itemId + PlayerPrefItemKey.IsSelected, intSelected);
+            }
+        }
+        else
+        {
+            Debug.Log("toggle is null");
+        }
+        GetListFriendDefault();
+
     }
 
 }

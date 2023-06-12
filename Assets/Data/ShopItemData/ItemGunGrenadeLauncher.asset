@@ -15,13 +15,13 @@ MonoBehaviour:
   id: ItemGunGrenadeLauncher
   nameOfItem: GrenadeLauncher
   description: 
-  maxAmountDefault: 120
+  maxAmountDefault: 80
   imgDescription: {fileID: 21300000, guid: 1174d15837d68184c9a81a2340b467a5, type: 3}
-  priceToUpgradeDefault: 126
-  pricePerOneDefault: 111
+  priceToUpgradeDefault: 600
+  pricePerOneDefault: 11
   currentLevel: 0
-  damageDefault: 0
-  bulletSpeed: 0
-  reloadTime: 0
-  priceOfGunDefault: 0
-  priceOfABullet: 0
+  damageDefault: 630
+  bulletSpeed: 782
+  reloadTime: 3
+  priceOfGunDefault: 75000
+  priceOfABullet: 12

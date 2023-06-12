@@ -15,13 +15,13 @@ MonoBehaviour:
   id: ItemGunM16
   nameOfItem: M-16
   description: 
-  maxAmountDefault: 120
+  maxAmountDefault: 150
   imgDescription: {fileID: 21300000, guid: 6415949084057c24f8424d1e23755dbe, type: 3}
-  priceToUpgradeDefault: 126
-  pricePerOneDefault: 111
+  priceToUpgradeDefault: 200
+  pricePerOneDefault: 7
   currentLevel: 0
-  damageDefault: 0
-  bulletSpeed: 0
-  reloadTime: 0
-  priceOfGunDefault: 0
-  priceOfABullet: 0
+  damageDefault: 270
+  bulletSpeed: 1058
+  reloadTime: 1
+  priceOfGunDefault: 18000
+  priceOfABullet: 12

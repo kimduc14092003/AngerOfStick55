@@ -6,4 +6,6 @@ public class ItemController : MonoBehaviour
 {
     public string itemId;
     public GameObject lockPanel;
+    public GameObject checkBoxSelectFriend;
+
 }

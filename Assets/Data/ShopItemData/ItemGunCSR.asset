@@ -17,11 +17,11 @@ MonoBehaviour:
   description: 
   maxAmountDefault: 120
   imgDescription: {fileID: 21300000, guid: c7408685b004dd6429824a8fd051e23b, type: 3}
-  priceToUpgradeDefault: 126
-  pricePerOneDefault: 111
+  priceToUpgradeDefault: 500
+  pricePerOneDefault: 9
   currentLevel: 0
-  damageDefault: 0
-  bulletSpeed: 0
-  reloadTime: 0
-  priceOfGunDefault: 0
-  priceOfABullet: 0
+  damageDefault: 306
+  bulletSpeed: 1012
+  reloadTime: 0.5
+  priceOfGunDefault: 55000
+  priceOfABullet: 55000

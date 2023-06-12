@@ -23,5 +23,5 @@ MonoBehaviour:
   damageDefault: 0
   bulletSpeed: 0
   reloadTime: 0
-  priceOfGunDefault: 0
-  priceOfABullet: 0
+  priceOfGunDefault: 13500
+  priceOfABullet: 11

@@ -17,9 +17,9 @@ MonoBehaviour:
   description: 
   maxAmountDefault: 600
   imgDescription: {fileID: 21300000, guid: b8c3eec83a05e9a4694f42c2965c7953, type: 3}
-  priceToUpgradeDefault: 340
-  pricePerOneDefault: 220
+  priceToUpgradeDefault: 400
+  pricePerOneDefault: 4
   currentLevel: 0
-  damageDefault: 0
+  damageDefault: 408
   isSelected: 0
-  priceOfFriendDefault: 0
+  priceOfFriendDefault: 90000

@@ -15,13 +15,13 @@ MonoBehaviour:
   id: ItemGunMicrogun
   nameOfItem: Microgun
   description: 
-  maxAmountDefault: 120
+  maxAmountDefault: 180
   imgDescription: {fileID: 21300000, guid: 22d812ee07d486943ae26a79aa54879a, type: 3}
-  priceToUpgradeDefault: 126
-  pricePerOneDefault: 111
+  priceToUpgradeDefault: 450
+  pricePerOneDefault: 8
   currentLevel: 0
-  damageDefault: 0
-  bulletSpeed: 0
-  reloadTime: 0
-  priceOfGunDefault: 0
-  priceOfABullet: 0
+  damageDefault: 540
+  bulletSpeed: 1104
+  reloadTime: 0.5
+  priceOfGunDefault: 65000
+  priceOfABullet: 12

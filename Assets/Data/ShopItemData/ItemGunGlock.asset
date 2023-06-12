@@ -15,13 +15,13 @@ MonoBehaviour:
   id: ItemGunGlock
   nameOfItem: Glock-18
   description: 
-  maxAmountDefault: 120
+  maxAmountDefault: 140
   imgDescription: {fileID: 21300000, guid: 94415d2dd4948974f85a2a230fce88f2, type: 3}
-  priceToUpgradeDefault: 126
-  pricePerOneDefault: 111
+  priceToUpgradeDefault: 200
+  pricePerOneDefault: 6
   currentLevel: 0
-  damageDefault: 0
-  bulletSpeed: 0
-  reloadTime: 0
-  priceOfGunDefault: 0
-  priceOfABullet: 0
+  damageDefault: 216
+  bulletSpeed: 1058
+  reloadTime: 0.5
+  priceOfGunDefault: 15000
+  priceOfABullet: 12
