@@ -15,23 +15,32 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector2 offset1;
     [SerializeField] private SkeletonAnimation skeletonAnimation;
     [SerializeField] private Transform bodyTransform;
-    [SpineAnimation] public string idleAnim,runAnim,jumpAnim,hitAnim,deadAnim,
+
+    [Header("Spine Animation")]
+    [SpineAnimation]
+    public string idleAnim;
+    [SpineAnimation] public string runAnim,jumpAnim,hitAnim,deadAnim,
                 jumpKick1Anim,jumpKick2Anim,skillAnim,wrestleAnim,comboKick0Anim,comboKick1Anim,comboPunch;
+    [SpineAnimation] public string[] kickComboAnim, punchComboAnim, trampleComboAnim;
 
     private float horizontalValue,tempTime;
     private bool isFacingRight;
-    private bool isClimb,isBow,isJump, isAttackKick0 = false, isAttackKick1 = false, isAttackPunch = false, isThrowEnemy,isThrowOnce=true;
+    private bool isClimb,isBow,isJump, isAttackKick0 = false, isTrample = false, isAttackPunch = false, isThrowEnemy,isThrowOnce=true;
     private bool isFalling=false;
 
     [SerializeField] private CapsuleCollider2D capsuleCollider;
     [SerializeField] private LedgeDetection ledgeDetection;
     [SerializeField] private GameObject[] attackColliders;
+    public Spine.Animation TargetAnimation { get; private set; }
 
     private List<float> listDeltaTimeInAnim;
+    private int currentIndexAttackCombo;
+    string currentAnimTest;
     private void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         isBow = false;
+        currentIndexAttackCombo = -1;
         skeletonAnimation.state.Event += HitEvent;
         skeletonAnimation.AnimationState.Complete += OnEndAttackCombo;
         skeletonAnimation.AnimationState.End += OnEndAttackCombo;
@@ -44,8 +53,13 @@ public class PlayerMovement : MonoBehaviour
         HandlePlayerInput();
         StartCoroutine(FlipPlayer());
         HandleCharacterClimbAndMove();
-        HandlePlayerAnimation();
+        HandlePlayerBasicAnimation();
         IsCharacterOnGround();
+        if (currentAnimTest != GetCurrentAnimation(0).Name)
+        {
+            Debug.Log(currentAnimTest + " | " + GetCurrentAnimation(0).Name);
+            currentAnimTest = GetCurrentAnimation(0).Name;
+        }
     }
 
     public void IsCharacterOnGround()
@@ -67,23 +81,6 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawWireSphere(attackColliders[1].transform.position, 0.5f);
     }
 
-    public void ClickJ()
-    {
-        isAttackPunch = true;
-        tempTime = Time.time;
-    }
-
-    public void ClickK()
-    {
-        isAttackKick1 = true;
-        tempTime = Time.time;
-    }
-
-    public void ClickU()
-    {
-        isAttackKick0 = true;
-        tempTime = Time.time;
-    }
 
     private void HandlePlayerInput()
     {
@@ -106,25 +103,35 @@ public class PlayerMovement : MonoBehaviour
         // Xử lý tấn công 1
         if (Input.GetKeyDown(KeyCode.U)&&!isJump )
         {
-            isAttackKick0 = true;
-            isAttackKick1 = false;
-            isAttackPunch = false;
+            if (!isTrample)
+            {
+                StartCoroutine(TrampledAttackCombo());
+            }
             tempTime = Time.time;
         }
         // Xử lý tấn công 2
         if (Input.GetKeyDown(KeyCode.J) && !isJump)
         {
-            isAttackPunch = true;
+            /*isAttackPunch = true;
             isAttackKick1 = false;
-            isAttackKick0 = false;
+            isAttackKick0 = false;*/
+            if (!isAttackPunch)
+            {
+                StartCoroutine(PunchAttackCombo());
+            }
             tempTime = Time.time;
         }
         // Xử lý tấn công 3
         if (Input.GetKeyDown(KeyCode.K) && !isJump)
         {
-            isAttackKick1 = true;
+         /* isAttackKick1 = true;
             isAttackPunch = false;
-            isAttackKick0 = false;
+            isAttackKick0 = false;*/
+
+            if (!isAttackKick0)
+            {
+                StartCoroutine(KickAttackCombo());
+            }
             tempTime = Time.time;
         }
         // Xử lý sự kiện nhảy của Player
@@ -188,16 +195,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEndAttackCombo(TrackEntry trackEntry)
     {
-        string[] listAttackEntry = new string[] {comboKick0Anim,comboKick1Anim,comboPunch };
+       // Debug.Log("End Anim" + trackEntry);
+        /*if()
+        PlayAnimation(idleAnim, 0);*/
+        /*string[] listAttackEntry = new string[] {comboKick0Anim,comboKick1Anim,comboPunch };
         for(int i = 0; i < listAttackEntry.Length; i++)
         {
             if (listAttackEntry[i] == trackEntry.ToString())
             {
                 StartCoroutine(MoveToNewPos());
-                Debug.Log("End Anim"+trackEntry);
 
             }
-        }
+        }*/
     }
 
     private IEnumerator MoveToNewPos()
@@ -211,11 +220,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckAndStopAllCombo()
     {
-        if (isAttackKick0 || isAttackKick1 || isAttackPunch)
+        if (isAttackKick0 || isTrample || isAttackPunch)
         {
             isAttackKick0 = false;
-            isAttackKick1 = false;
-            isAttackPunch = false;
+            isTrample = false;
+            //isAttackPunch = false;
         }
        
     }
@@ -285,7 +294,7 @@ public class PlayerMovement : MonoBehaviour
         if (!isClimb&&!isThrowEnemy)
         {
             //Xử lý di chuyển trái phải cho player 
-            if (horizontalValue != 0&& !isAttackKick0 && !isAttackKick1 && !isAttackPunch )
+            if (horizontalValue != 0&& !isAttackKick0 && !isTrample && !isAttackPunch )
             {
                 rb.velocity = new Vector2(horizontalValue * speed*Time.deltaTime, rb.velocity.y);
             }
@@ -335,8 +344,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void HandlePlayerAnimation()
+    private void HandlePlayerBasicAnimation()
     {
+        //Nếu đang sử dụng combo thì return hàm
+        if (isAttackPunch||isAttackKick0||isTrample)
+        {
+            return;
+        }
+
         if (isJump)
         {
             if (skeletonAnimation.AnimationState.ToString() != jumpAnim)
@@ -354,29 +369,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         else
-        if (isAttackKick0)
-        {
-            if (skeletonAnimation.AnimationState.ToString() != comboKick0Anim)
-            {
-                skeletonAnimation.AnimationState.SetAnimation(0, comboKick0Anim, false);
-
-            }
-        }
-        else
-        if (isAttackKick1)
-        {
-            if (skeletonAnimation.AnimationState.ToString() != comboKick1Anim)
-            {
-                skeletonAnimation.AnimationState.SetAnimation(0, comboKick1Anim, false);
-            }
-        }
-        else
-        if (isAttackPunch)
-        {
-            if (skeletonAnimation.AnimationState.ToString() != comboPunch)
-                skeletonAnimation.AnimationState.SetAnimation(0, comboPunch, false);
-        }
-        else
         if (horizontalValue != 0)
         {
             if (skeletonAnimation.AnimationState.ToString() != runAnim)
@@ -392,6 +384,100 @@ public class PlayerMovement : MonoBehaviour
         }
 
         GetListDeltaTimeOfEvent(skeletonAnimation.AnimationState.ToString());
+    }
+    IEnumerator PunchAttackCombo()
+    {
+        isAttackPunch = true;
+
+        for (int i = 0; i < punchComboAnim.Length; i++)
+        {
+            var myAnimation = skeletonAnimation.Skeleton.Data.FindAnimation(punchComboAnim[i]);
+            float duration = myAnimation.Duration;
+            skeletonAnimation.AnimationState.SetAnimation(0, punchComboAnim[i], false);
+
+            yield return new WaitForSeconds(duration);
+            if (tempTime+duration < Time.time)
+            {
+                if (GetCurrentAnimation(0).Name != idleAnim)
+                {
+                    skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
+                }
+                
+                break;
+            }
+        }
+        if (GetCurrentAnimation(0).Name != idleAnim)
+        {
+            skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
+        }
+        isAttackPunch = false;
+    }
+
+    IEnumerator KickAttackCombo()
+    {
+        isAttackKick0 = true;
+
+        for (int i = 0; i < kickComboAnim.Length; i++)
+        {
+            var myAnimation = skeletonAnimation.Skeleton.Data.FindAnimation(kickComboAnim[i]);
+            float duration = myAnimation.Duration;
+            skeletonAnimation.AnimationState.SetAnimation(0, kickComboAnim[i], false);
+
+            yield return new WaitForSeconds(duration);
+            if (tempTime + duration < Time.time)
+            {
+                if (GetCurrentAnimation(0).Name != idleAnim)
+                {
+                    skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
+                }
+
+                break;
+            }
+        }
+        if (GetCurrentAnimation(0).Name != idleAnim)
+        {
+            skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
+        }
+        isAttackKick0 = false;
+    }
+
+    IEnumerator TrampledAttackCombo()
+    {
+        isTrample = true;
+        
+        skeletonAnimation.AnimationState.SetAnimation(0, trampleComboAnim[0], false);
+
+        var myAnimation = skeletonAnimation.Skeleton.Data.FindAnimation(trampleComboAnim[1]);
+        float duration = myAnimation.Duration;
+        int count=1;
+        for (int i = 0; i < count; i++)
+        {
+            yield return new WaitForSeconds(duration);
+
+            skeletonAnimation.AnimationState.SetAnimation(0, trampleComboAnim[1], false);
+
+            if (tempTime + duration < Time.time)
+            {
+                if (GetCurrentAnimation(0).Name != idleAnim)
+                {
+                    skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
+                }
+                break;
+            }
+            else
+            {
+                count++;
+            }
+        }
+
+        isTrample = false;
+    }
+
+
+    Spine.Animation GetCurrentAnimation(int layerIndex)
+    {
+        var currentTrackEntry = skeletonAnimation.AnimationState.GetCurrent(layerIndex);
+        return (currentTrackEntry != null) ? currentTrackEntry.Animation : null;
     }
 
     private void HitEvent(TrackEntry trackEntry, Spine.Event e)
