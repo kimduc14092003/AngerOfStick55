@@ -1,13 +1,16 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public static class StaticData 
 {
-    public static float[] playerHPRate = { 1 , 1.2f ,1.56f,2.028f,   2.636f,   3.69f,    4.797f,   6.234f,  8.727f,   11.343f,  14.744f, 19.167f,  24.915f,  32.388f,  42.104f };
-    public static float[] playerPowerRate = { 1,1.5f, 2.233333333f, 3.1f, 4.333333333f, 5.633333333f, 7.316666667f, 8.75f,    12.21666667f, 15.85f,   17.41666667f, 20.86666667f, 25.03333333f, 30.03333333f, 36.03333333f };
-    public static float[] playerPriceToUpdateRate = { 1 , 4,   10 , 18 , 28 , 40 , 56 , 76 , 100, 128, 160, 196, 236, 286 };
+    public static float[] playerHPRate = { 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f, 1.3f };
+    public static float[] playerPowerRate = { 1.5f,   1.488888889f, 1.388059701f, 1.397849462f, 1.3f, 1.298816568f, 1.195899772f, 1.396190476f, 1.297407913f, 1.098843323f, 1.198086124f, 1.199680511f, 1.199733688f, 1.199778024f };
+    public static float[] playerPriceToUpdateRate = { 4, 2.5f, 1.8f, 1.555555556f, 1.428571429f, 1.4f, 1.357142857f, 1.315789474f, 1.28f,    1.25f,    1.225f,   1.204081633f, 1.211864407f, 1.211864407f };
+    // Tỷ lệ so với level trước
 
+
+    // Tỷ lệ so với giá trị ban đầu
     public static float[] healthPricePerOneRate = { 1, 3, 6, 11, 21, 31, 41, 51 };
     public static float[] healthPriceToUpgradeRate = { 1,2.133333333f, 3.911111111f ,7.466666667f, 11.02222222f, 14.57777778f, 18.13333333f };
 

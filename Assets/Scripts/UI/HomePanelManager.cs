@@ -52,13 +52,25 @@ public class HomePanelManager : MonoBehaviour
         int jewelAmount= PlayerPrefs.GetInt("playerJewel");
         jewelTxt.text= string.Format("{0:N0}", jewelAmount);
 
-        playerHealthTxt.text ="HP: "+ PlayerPrefs.GetInt(PlayerPrefPlayerKey.playerHealth+"");
+        SetInforPlayerInHome();
+    }
+
+    private void SetInforPlayerInHome()
+    {
+        playerHealthTxt.text = "HP: " + PlayerPrefs.GetInt(PlayerPrefPlayerKey.playerHealth + "");
         playerLevelTxt.text = "Lv " + PlayerPrefs.GetInt(PlayerPrefPlayerKey.playerLevel + "");
         playerPowerTxt.text = "Power: " + PlayerPrefs.GetInt(PlayerPrefPlayerKey.playerPower + "");
     }
 
     public void SetActiveUpgradePlayerPanel(bool isActive)
     {
+        // luôn tắt panel nâng cấp Player khi level >= max level
+        int currentLevel = PlayerPrefs.GetInt(PlayerPrefPlayerKey.playerLevel + "");
+        if (currentLevel >= StaticData.playerHPRate.Length+1)
+        {
+            upgradePlayerPanel.SetActive(false);
+            return;
+        }
         upgradePlayerPanel.SetActive(isActive);
         if (isActive)
         {
@@ -68,18 +80,20 @@ public class HomePanelManager : MonoBehaviour
 
     private void ResetDataUpgradePlayerPanel()
     {
+
         int currentLevel = PlayerPrefs.GetInt(PlayerPrefPlayerKey.playerLevel + "");
         int currentHealth = PlayerPrefs.GetInt(PlayerPrefPlayerKey.playerHealth + "");
         int currentPower = PlayerPrefs.GetInt(PlayerPrefPlayerKey.playerPower + "");
         int currentPriceUpgrade = PlayerPrefs.GetInt(PlayerPrefPlayerKey.playerUpgradePrice + "");
+
 
         currentLevelTxt.text = currentLevel + "";
         currentHPTxt.text = currentHealth + "";
         currentPowerTxt.text = currentPower + "";
 
         nextLevelTxt.text = (currentLevel+1) + "";
-        nextHPTxt.text = currentHealth * StaticData.playerHPRate[currentLevel-1] + "";
-        nextPowerTxt.text = currentPower * StaticData.playerPowerRate[currentLevel-1] + "";
+        nextHPTxt.text =(int) (currentHealth * StaticData.playerHPRate[currentLevel-1]) + "";
+        nextPowerTxt.text = (int)(currentPower * StaticData.playerPowerRate[currentLevel-1]) + "";
 
         priceToUpgradeLevelTxt.text = currentPriceUpgrade + "";
     }
@@ -94,16 +108,26 @@ public class HomePanelManager : MonoBehaviour
 
         currentLevel++;
 
-        currentHealth = (int)(currentHealth * StaticData.playerHPRate[currentLevel - 1]);
-        currentPower = (int)(currentPower * StaticData.playerPowerRate[currentLevel - 1]);
-        currentPriceUpgrade = (int)(currentPriceUpgrade * StaticData.playerPriceToUpdateRate[currentLevel - 1]);
+        currentHealth = (int)(currentHealth * StaticData.playerHPRate[currentLevel - 2]);//15
+        currentPower = (int)(currentPower * StaticData.playerPowerRate[currentLevel - 2]);
+        currentPriceUpgrade = (int)(currentPriceUpgrade * StaticData.playerPriceToUpdateRate[currentLevel - 2]);
 
         PlayerPrefs.SetInt(PlayerPrefPlayerKey.playerLevel + "", currentLevel);
         PlayerPrefs.SetInt(PlayerPrefPlayerKey.playerHealth + "",currentHealth);
         PlayerPrefs.SetInt(PlayerPrefPlayerKey.playerPower + "",currentPower);
         PlayerPrefs.SetInt(PlayerPrefPlayerKey.playerUpgradePrice + "",currentPriceUpgrade);
 
+        SetInforPlayerInHome();
+
+        //Tắt panel upgrade khi nâng cấp lên max level
+        if (currentLevel >= StaticData.playerHPRate.Length + 1)
+        {
+            SetActiveUpgradePlayerPanel(false);
+            return;
+        }
+
         ResetDataUpgradePlayerPanel();
+
     }
 
 }
