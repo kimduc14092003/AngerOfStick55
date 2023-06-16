@@ -6581,7 +6581,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skeletonDataAsset: {fileID: 11400000, guid: 0a4160a608775414d8b59966ca540175, type: 2}
+  skeletonDataAsset: {fileID: 11400000, guid: 3ea7c2e320ce0a54a91ff4451687a187, type: 2}
   initialSkinName: 
   fixPrefabOverrideViaMeshFilter: 2
   initialFlipX: 0
@@ -6627,7 +6627,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ce94c04547ad24e4a934d5f50721647c, type: 2}
+  - {fileID: 2100000, guid: 8eabefaaab6e87f4c9bcf6fe4d8c239b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6686,7 +6686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 350
-  jumpingPower: 5
+  jumpingPower: 300
   delayTimeOfCombo: 0.3
   groundCheck: {fileID: 1999174634}
   headCheck: {fileID: 1806611224}
@@ -6734,6 +6734,12 @@ MonoBehaviour:
   trampleComboAnim:
   - ATK_COMBO_TRAMPLE_0
   - ATK_COMBO_TRAMPLE_1
+  skillComboAnim:
+  - SKILL_0
+  - SKILL_1
+  - SKILL_2
+  - SKILL_3
+  - SKILL_4
   capsuleCollider: {fileID: 82717494}
   ledgeDetection: {fileID: 1806611225}
   attackColliders:
@@ -6741,6 +6747,8 @@ MonoBehaviour:
   - {fileID: 1385484816}
   - {fileID: 570000362}
   - {fileID: 865397617}
+  isTest: 0
+  isTest2: 0
 --- !u!50 &2019363927
 Rigidbody2D:
   serializedVersion: 4

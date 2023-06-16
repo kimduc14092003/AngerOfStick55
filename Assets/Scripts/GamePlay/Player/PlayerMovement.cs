@@ -2,6 +2,7 @@
 using Spine.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Animation = Spine.Animation;
 
@@ -21,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     public string idleAnim;
     [SpineAnimation] public string runAnim,jumpAnim,hitAnim,deadAnim,
                 jumpKick1Anim,jumpKick2Anim,skillAnim,wrestleAnim,comboKick0Anim,comboKick1Anim,comboPunch;
-    [SpineAnimation] public string[] kickComboAnim, punchComboAnim, trampleComboAnim;
+    [SpineAnimation] public string[] kickComboAnim, punchComboAnim, trampleComboAnim,skillComboAnim;
 
     private float horizontalValue,tempTime;
     private bool isFacingRight;
@@ -36,12 +37,14 @@ public class PlayerMovement : MonoBehaviour
     private List<float> listDeltaTimeInAnim;
     private int currentIndexAttackCombo;
     string currentAnimTest;
+
+    public bool isTest,isTest2;
     private void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         isBow = false;
         currentIndexAttackCombo = -1;
-        skeletonAnimation.state.Event += HitEvent;
+        skeletonAnimation.state.Event += TestEvent;
         skeletonAnimation.AnimationState.Complete += OnEndAttackCombo;
         skeletonAnimation.AnimationState.End += OnEndAttackCombo;
         listDeltaTimeInAnim = new List<float>();
@@ -53,12 +56,30 @@ public class PlayerMovement : MonoBehaviour
         HandlePlayerInput();
         StartCoroutine(FlipPlayer());
         HandleCharacterClimbAndMove();
-        HandlePlayerBasicAnimation();
+        //HandlePlayerBasicAnimation();
         IsCharacterOnGround();
         if (currentAnimTest != GetCurrentAnimation(0).Name)
         {
             Debug.Log(currentAnimTest + " | " + GetCurrentAnimation(0).Name);
             currentAnimTest = GetCurrentAnimation(0).Name;
+        }
+
+        if (isTest)
+        {
+            if (rb.velocity.y <= 0.2f&&rb.velocity.y>=-0.2f)
+            {
+                print("stop now!");
+                rb.velocity = Vector2.zero;
+                rb.gravityScale = 0;
+                isTest2 = true;
+                skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[2], false);
+
+            }
+
+            if (!isTest2)
+            {
+                rb.gravityScale = 1;
+            }
         }
     }
 
@@ -134,6 +155,11 @@ public class PlayerMovement : MonoBehaviour
             }
             tempTime = Time.time;
         }
+        // Xử lý sự kiện kĩ năng của Player
+        if (Input.GetKeyDown(KeyCode.I) && !isJump)
+        {
+            TestSkill();
+        }
         // Xử lý sự kiện nhảy của Player
         if (Input.GetButtonDown("Jump"))
         {
@@ -195,7 +221,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEndAttackCombo(TrackEntry trackEntry)
     {
-       // Debug.Log("End Anim" + trackEntry);
+        // 
         /*if()
         PlayAnimation(idleAnim, 0);*/
         /*string[] listAttackEntry = new string[] {comboKick0Anim,comboKick1Anim,comboPunch };
@@ -206,6 +232,24 @@ public class PlayerMovement : MonoBehaviour
                 StartCoroutine(MoveToNewPos());
 
             }
+        }*/
+
+        // Test Skill
+        Debug.Log("End Anim " + trackEntry);
+        if (trackEntry.ToString() == skillComboAnim[0])
+        {
+            rb.AddForce(Vector2.up * jumpingPower);
+            skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[1], false);
+
+        }
+        if (trackEntry.ToString() == skillComboAnim[2])
+        {
+           isTest2 = false;
+        }
+        /*if (trackEntry.ToString() == skillComboAnim[1])
+        {
+            rb.velocity = Vector2.zero;
+            rb.gravityScale = 0;
         }*/
     }
 
@@ -513,6 +557,33 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
+    private void TestEvent(TrackEntry trackEntry, Spine.Event e)
+    {
+      /*  if (e.Data.Name == "1")
+        {
+            Debug.Log("Jump");
+            rb.AddForce(Vector2.up * jumpingPower);
+        }
+        if (e.Data.Name == "2")
+        {
+            if (isTest)
+            {
+                Debug.Log("Stop");
+                isTest = false;
+                rb.velocity=Vector2.zero;
+                rb.gravityScale = 0;
+            }
+            else
+            {
+                Debug.Log("fall");
+
+                rb.gravityScale = 1;
+                isTest=true;
+            }
+        }*/
+
+    }
     public void GetListDeltaTimeOfEvent(string animationName)
     {
         listDeltaTimeInAnim.Clear();
@@ -545,6 +616,12 @@ public class PlayerMovement : MonoBehaviour
         {
            // isThrowEnemy = true;
         }
+    }
+
+    private void TestSkill()
+    {
+        skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[0], false);
+        
     }
 
 }
