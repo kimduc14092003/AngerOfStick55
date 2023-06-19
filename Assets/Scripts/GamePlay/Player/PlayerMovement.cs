@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
     private int currentIndexAttackCombo;
     string currentAnimTest;
 
-    public bool isTest,isTest2;
+    public bool isTest,isTest2,isTestStop,isSkill;
     private void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
         currentIndexAttackCombo = -1;
         skeletonAnimation.state.Event += TestEvent;
         skeletonAnimation.AnimationState.Complete += OnEndAttackCombo;
-        skeletonAnimation.AnimationState.End += OnEndAttackCombo;
+        //skeletonAnimation.AnimationState.End += OnEndAttackCombo;
         listDeltaTimeInAnim = new List<float>();
     }
 
@@ -60,25 +60,51 @@ public class PlayerMovement : MonoBehaviour
         IsCharacterOnGround();
         if (currentAnimTest != GetCurrentAnimation(0).Name)
         {
-            Debug.Log(currentAnimTest + " | " + GetCurrentAnimation(0).Name);
+            //Debug.Log(currentAnimTest + " | " + GetCurrentAnimation(0).Name);
             currentAnimTest = GetCurrentAnimation(0).Name;
         }
-
-        if (isTest)
+        if (rb.velocity.y <= 0.2f && rb.velocity.y >= -0.2f)
         {
-            if (rb.velocity.y <= 0.2f&&rb.velocity.y>=-0.2f)
+            if (!isTestStop)
             {
-                print("stop now!");
-                rb.velocity = Vector2.zero;
-                rb.gravityScale = 0;
-                isTest2 = true;
-                skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[2], false);
-
+                if(!Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer)&&isSkill)
+                {
+                    isTestStop = true;
+                    TestStop();
+                }
             }
+        }
+        StartCoroutine(TestReturnIdle(0.5f));
+        TestSkillMakeDame();
+    }
 
-            if (!isTest2)
+    void TestSkillMakeDame()
+    {
+        if(currentAnimTest == skillComboAnim[3]){
+                Debug.Log("Run Skill 4");
+            if (Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer))
             {
-                rb.gravityScale = 1;
+                skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[4], false);
+                /*rb.gravityScale = 1;*/
+            }
+        }
+    }
+    IEnumerator TestReturnIdle(float time)
+    {
+        if(currentAnimTest == skillComboAnim[4])
+        {
+            if(Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer))
+            {
+                yield return new WaitForSeconds(time);
+                if(currentAnimTest != idleAnim)
+                {
+                    Debug.Log("Run Test return Idle");
+                    skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
+                    rb.gravityScale = 1.0f;
+                    isTest = true;
+                    isTestStop = false;
+                }
+
             }
         }
     }
@@ -158,6 +184,8 @@ public class PlayerMovement : MonoBehaviour
         // Xử lý sự kiện kĩ năng của Player
         if (Input.GetKeyDown(KeyCode.I) && !isJump)
         {
+            isSkill = true;
+            isTest = true;
             TestSkill();
         }
         // Xử lý sự kiện nhảy của Player
@@ -245,12 +273,48 @@ public class PlayerMovement : MonoBehaviour
         if (trackEntry.ToString() == skillComboAnim[2])
         {
            isTest2 = false;
+            TestFall();
         }
+        if (trackEntry.ToString() == skillComboAnim[3])
+        {
+            //skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[4], false);
+        }
+
+        if (trackEntry.ToString() == skillComboAnim[4])
+        {
+            isSkill=false;
+        }
+
+
         /*if (trackEntry.ToString() == skillComboAnim[1])
         {
             rb.velocity = Vector2.zero;
             rb.gravityScale = 0;
         }*/
+    }
+
+    private void TestStop()
+    {
+        if (isTest)
+        {
+            {
+                isTest = false;
+                rb.velocity = Vector2.zero;
+                rb.gravityScale = 0;
+                isTest2 = true;
+                skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[2], false);
+            }
+        }
+    }
+
+    private void TestFall()
+    {
+        if (!isTest2)
+        {
+            skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[3], false);
+            rb.gravityScale = 10;
+            isTestStop = false;
+        }
     }
 
     private IEnumerator MoveToNewPos()
@@ -346,7 +410,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 rb.velocity = new Vector2(0, rb.velocity.y);
             }
-            rb.gravityScale = 1;
+           // rb.gravityScale = 1;
         }
         else
         {
