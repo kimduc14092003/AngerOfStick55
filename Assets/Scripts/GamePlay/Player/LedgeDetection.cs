@@ -6,7 +6,6 @@ public class LedgeDetection : MonoBehaviour
 {
     [SerializeField] private float radius;
     [SerializeField] private LayerMask layerMaskLedge;
-    [SerializeField] private PlayerMovement playerMovement;
     private bool canDetected;
 
     private void Start()
@@ -17,14 +16,13 @@ public class LedgeDetection : MonoBehaviour
     {
         Gizmos.DrawWireSphere(transform.position, radius);
     }
-    public bool IsCharacterClimb()
+    public Collider2D GetColliderCharacterClimb()
     {
         if(canDetected)
         {
             return Physics2D.OverlapCircle(transform.position, radius, layerMaskLedge);
         }
-
-        return false;
+        return null;
     }
     private void OnTriggerStay2D(Collider2D collision)
     {

@@ -55,7 +55,7 @@ public class EnemyMovement : MonoBehaviour
 
         if (isJumping)
         {
-            if (ledgeDetection.IsCharacterClimb())
+            if (ledgeDetection.GetColliderCharacterClimb())
             {
                 CharacterClimb();
             }
