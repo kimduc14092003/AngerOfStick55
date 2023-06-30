@@ -1,0 +1,12 @@
+STICK MAN.skel.png
+size:115,36
+filter:Linear,Linear
+pma:true
+chan
+bounds:2,17,17,68
+rotate:90
+head1
+bounds:72,6,41,28
+than
+bounds:2,2,13,50
+rotate:90

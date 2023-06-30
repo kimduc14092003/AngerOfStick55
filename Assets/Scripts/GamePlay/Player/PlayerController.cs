@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
     {
         if (currentAnim != GetCurrentAnimation(0).Name)
         {
-           // Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
+            Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
             currentAnim = GetCurrentAnimation(0).Name;
         }
     }
@@ -612,6 +612,7 @@ public class PlayerController : MonoBehaviour
 
         else
         {
+            if(!isDelayForCombo)
             ReturnIdleAnim();
         }
 
@@ -660,7 +661,7 @@ public class PlayerController : MonoBehaviour
                 break;
             }
         }
-        ReturnIdleAnim();
+        //ReturnIdleAnim();
 
         isAttackKick0 = false;
         Invoke("ComboComplete", 0.3f);
