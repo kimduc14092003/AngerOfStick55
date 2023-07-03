@@ -6845,8 +6845,6 @@ MonoBehaviour:
   speed: 350
   jumpingPower: 6
   delayTimeOfCombo: 0.3
-  moveAttackSpeed: 10
-  moveAttackSpeed2: 40
   groundCheck: {fileID: 1999174634}
   headCheck: {fileID: 1806611224}
   groundLayer:
@@ -6864,6 +6862,7 @@ MonoBehaviour:
   offsetBeginClimb: {x: 0, y: 2.3}
   skeletonAnimation: {fileID: 2019363922}
   bodyTransform: {fileID: 82717493}
+  data: {fileID: 11400000, guid: 073cd8709f644b142b1fad320e1ea87a, type: 2}
   idleAnim: IDLE
   runAnim: RUN
   jumpAnim: JUMP

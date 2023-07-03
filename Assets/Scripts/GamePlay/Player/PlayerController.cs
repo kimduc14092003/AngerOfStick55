@@ -11,7 +11,7 @@ using Animation = Spine.Animation;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D rb;
-    [SerializeField] private float speed,jumpingPower, delayTimeOfCombo,moveAttackSpeed,moveAttackSpeed2;
+    [SerializeField] private float speed,jumpingPower, delayTimeOfCombo;
     [SerializeField] private Transform groundCheck,headCheck;
     [SerializeField] private LayerMask groundLayer,climbPointLayer,enemyLayer;
     [SerializeField] private int jumpMax, jumpCount;
@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SkeletonAnimation skeletonAnimation;
     [SerializeField] private Transform bodyTransform;
 
+    [SerializeField] private SpineAnimationData data;
     [Header("Spine Animation")]
     [SpineAnimation]
     public string idleAnim;
@@ -302,8 +303,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCompleteAnim(TrackEntry trackEntry)
     {
-       
-
+        
     }
 
     private void HandleEvent(TrackEntry trackEntry, Spine.Event e)
@@ -338,24 +338,45 @@ public class PlayerController : MonoBehaviour
                 //OnEndAttackCombo(trackEntry);
             }
         }
-
+        
         // Xử lý event khi animation là Combo Kick Anim
         if (kickComboAnim.Contains(currentAnim))
         {
-            if (currentAnim == kickComboAnim[5])
+/*            if (currentAnim == kickComboAnim[5])
             {
-                rb.velocity = Vector2.right * moveAttackSpeed2 * ((isFacingRight) ? 1 : -1);
+                rb.velocity = Vector2.right * SpineAnimationData.kickVelocity[5] * ((isFacingRight) ? 1 : -1);
             }
-            else
+            else*/
             if (e.Data.Name == "begin")
             {
-                Debug.Log("Player Move");
-                rb.velocity= Vector2.right * moveAttackSpeed*((isFacingRight)?1:-1);
+                rb.velocity= Vector2.right * data.GetKickAt(currentIndexAttackCombo) * ((isFacingRight)?1:-1);
+                Debug.Log("Player Move" + data.GetKickAt(currentIndexAttackCombo));
             }
             if (e.Data.Name == "end")
             {
                 Debug.Log("Player Stop");
                rb.velocity = Vector2.zero;
+            }
+        }
+
+        // Xử lý event khi animation là Combo Punch Anim
+        if (punchComboAnim.Contains(currentAnim))
+        {
+  /*          if (currentAnim == punchComboAnim[5])
+            {
+                rb.velocity = Vector2.right * moveAttackSpeed2 * ((isFacingRight) ? 1 : -1);
+            }
+            else*/
+            if (e.Data.Name == "begin")
+            {
+                Debug.Log("Player Move");
+                rb.velocity = Vector2.right * data.GetPunchAt(currentIndexAttackCombo) * ((isFacingRight) ? 1 : -1);
+                Debug.Log("Player Move" + data.GetPunchAt(currentIndexAttackCombo));
+            }
+            if (e.Data.Name == "end")
+            {
+                Debug.Log("Player Stop");
+                rb.velocity = Vector2.zero;
             }
         }
 
@@ -629,6 +650,7 @@ public class PlayerController : MonoBehaviour
             if(currentAnim!= punchComboAnim[i])
             {
                 skeletonAnimation.AnimationState.SetAnimation(0, punchComboAnim[i], false);
+                currentIndexAttackCombo = i;
             }
 
             yield return new WaitForSeconds(duration);
@@ -652,6 +674,7 @@ public class PlayerController : MonoBehaviour
             var myAnimation = skeletonAnimation.Skeleton.Data.FindAnimation(kickComboAnim[i]);
             float duration = myAnimation.Duration;
             skeletonAnimation.AnimationState.SetAnimation(0, kickComboAnim[i], false);
+            currentIndexAttackCombo = i;
 
             yield return new WaitForSeconds(duration);
             if (tempTime + duration < Time.time)
