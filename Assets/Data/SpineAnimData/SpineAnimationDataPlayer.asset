@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   punchVelocity:
   - 10
+  - 5
   - 10
-  - 10
-  - 10
-  - 10
+  - 2
+  - 12
   - 10
   kickVelocity:
   - 10

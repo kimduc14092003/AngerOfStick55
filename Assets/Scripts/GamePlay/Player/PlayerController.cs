@@ -308,6 +308,9 @@ public class PlayerController : MonoBehaviour
 
     private void HandleEvent(TrackEntry trackEntry, Spine.Event e)
     {
+        //Test
+        tempTime = Time.time;
+
         for (int i = 0; i < attackColliders.Length; i++)
         {
             attackColliders[i].SetActive(true);
@@ -369,13 +372,13 @@ public class PlayerController : MonoBehaviour
             else*/
             if (e.Data.Name == "begin")
             {
-                Debug.Log("Player Move");
+                Debug.Log("Player Move "+Time.time);
                 rb.velocity = Vector2.right * data.GetPunchAt(currentIndexAttackCombo) * ((isFacingRight) ? 1 : -1);
                 Debug.Log("Player Move" + data.GetPunchAt(currentIndexAttackCombo));
             }
             if (e.Data.Name == "end")
             {
-                Debug.Log("Player Stop");
+                Debug.Log("Player Stop " + Time.time);
                 rb.velocity = Vector2.zero;
             }
         }
