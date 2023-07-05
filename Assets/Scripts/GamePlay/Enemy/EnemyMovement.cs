@@ -28,7 +28,8 @@ public class EnemyMovement : MonoBehaviour
     private bool isJumping;
     private bool isClimbing;
     private bool isDead=false;
-    public float thrust;
+    private string currentAnim;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -60,10 +61,22 @@ public class EnemyMovement : MonoBehaviour
                 CharacterClimb();
             }
         }
+        GetCurrentAnimation();
     }
-    private void FixedUpdate()
+
+    private void GetCurrentAnimation()
     {
-        
+        if (currentAnim != GetCurrentAnimation(0).Name)
+        {
+            //Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name+": "+Time.time);
+            currentAnim = GetCurrentAnimation(0).Name;
+        }
+    }
+
+    Spine.Animation GetCurrentAnimation(int layerIndex)
+    {
+        var currentTrackEntry = skeletonAnimation.AnimationState.GetCurrent(layerIndex);
+        return (currentTrackEntry != null) ? currentTrackEntry.Animation : null;
     }
 
     public void DetectTargetCome()
@@ -161,53 +174,14 @@ public class EnemyMovement : MonoBehaviour
         isClimbing = false;
         rb.gravityScale = 1;
     }
-    // Xử lý khi enemy nhận dame và chết
-    public void HandleDameTaken(float dame)
-    {
-        this.health -= dame;
-        if(this.health <= 0)
-        {
-            isDead = true;
-            skeletonAnimation.AnimationState.SetAnimation(0, deadAnim, false);
-            capsuleCollider.gameObject.SetActive(false);
-            rb.gravityScale = 0;
-        }
-    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "box"&& !isJumping&&!isClimbing)
+        if (collision.gameObject.tag == "box" && !isJumping && !isClimbing)
         {
             isJumping = true;
             CharacterJump();
         }
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (!isDead)
-        {
-            if (collision.gameObject.tag == "PlayerMakeDamage")
-            {
-               /* skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
-                skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true,0.1f);
-                HandleDameTaken(10);
-
-                Vector2 directionForce= transform.position- collision.transform.parent.root.position;
-                directionForce= directionForce.normalized;
-
-                rb.AddForce(directionForce * thrust,ForceMode2D.Impulse);
-                StartCoroutine(KnockCo());
-               */
-            }
-        }
-
-
-    }
-
-    private IEnumerator KnockCo()
-    {
-        yield return new WaitForSeconds(0.5f);
-        rb.velocity = Vector2.zero;
-    }
+    
 }

@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
     {
         if (currentAnim != GetCurrentAnimation(0).Name)
         {
-            Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
+           // Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
             currentAnim = GetCurrentAnimation(0).Name;
         }
     }
@@ -176,10 +176,10 @@ public class PlayerController : MonoBehaviour
         // Xử lý sự kiện nhảy đá 1
         if(isJump&& Input.GetKeyDown(KeyCode.J))
         {
-            if(jumpCount > 0)
+            if(jumpCount > 0&&!isAttackPunch)
             {
                 skeletonAnimation.AnimationState.SetAnimation(0,jumpKick1Anim,false);
-                skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true,0.2f);
+                skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true,0.4f);
                 jumpCount--;
             }
         }
@@ -189,7 +189,7 @@ public class PlayerController : MonoBehaviour
             if(jumpCount>0)
             {
                 skeletonAnimation.AnimationState.SetAnimation(0, jumpKick2Anim, false);
-                skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true, 0.2f);
+                skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true, 0.4f);
                 jumpCount--;
             }
         }
@@ -308,9 +308,6 @@ public class PlayerController : MonoBehaviour
 
     private void HandleEvent(TrackEntry trackEntry, Spine.Event e)
     {
-        //Test
-        tempTime = Time.time;
-
         for (int i = 0; i < attackColliders.Length; i++)
         {
             attackColliders[i].SetActive(true);
@@ -372,14 +369,34 @@ public class PlayerController : MonoBehaviour
             else*/
             if (e.Data.Name == "begin")
             {
-                Debug.Log("Player Move "+Time.time);
-                rb.velocity = Vector2.right * data.GetPunchAt(currentIndexAttackCombo) * ((isFacingRight) ? 1 : -1);
-                Debug.Log("Player Move" + data.GetPunchAt(currentIndexAttackCombo));
+                if (currentAnim == punchComboAnim[4])
+                {
+                    rb.velocity = new Vector2(1f * ((isFacingRight) ? 1 : -1), 1) * data.GetPunchAt(currentIndexAttackCombo) ;
+                }
+                else
+                {
+                    rb.velocity = Vector2.right * data.GetPunchAt(currentIndexAttackCombo) * ((isFacingRight) ? 1 : -1);
+                }
+            }
+            if (e.Data.Name == "stop1")
+            {
+                //Debug.Log("Stop Velocity");
+                rb.velocity = Vector2.zero;
+                rb.gravityScale = 0;
+
+            }
+            if (e.Data.Name == "stop2")
+            {
+                rb.velocity = Vector2.zero;
+                rb.gravityScale = 20;
+
             }
             if (e.Data.Name == "end")
             {
-                Debug.Log("Player Stop " + Time.time);
+                //Debug.Log("Player Stop " + Time.time);
                 rb.velocity = Vector2.zero;
+                rb.gravityScale = 1;
+
             }
         }
 
@@ -398,7 +415,7 @@ public class PlayerController : MonoBehaviour
                 rb.gravityScale = 0;
 
             }
-            if (e.Data.Name == "hit")
+            if (e.Data.Name == "end")
             {
                 rb.gravityScale = 1;
 
@@ -429,7 +446,7 @@ public class PlayerController : MonoBehaviour
             isTrample = false;
             isAttackPunch = false;
         }
-            Debug.Log("Stop velocity!");
+           // Debug.Log("Stop velocity!");
             rb.velocity = Vector2.zero;
        
     }
@@ -525,9 +542,9 @@ public class PlayerController : MonoBehaviour
                     //Debug.Log("Stop x velocity!");
                     rb.velocity = new Vector2(0, rb.velocity.y);
                 }
+                rb.gravityScale = 1;
             }
 
-            rb.gravityScale = 1;
         }
         else
         {
@@ -790,10 +807,26 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-           // isThrowEnemy = true;
+            // isThrowEnemy = true;
+           
+            EnemyController enemyController = collision.transform.parent.root.gameObject.GetComponent<EnemyController>();
+            if(currentAnim == punchComboAnim[3])
+            {
+                enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.ThrowUp);
+            }
+            else
+            if (currentAnim == punchComboAnim[4])
+            {
+                enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.FallDown);
+
+            }
+            else
+            {
+                enemyController.HandleDameTaken(10, transform,CharacterTakeHitState.KnockBack);
+            }
         }
     }
 
-
+  
 
 }
