@@ -63,6 +63,7 @@ public class EnemyController : MonoBehaviour
                     break;
                 }
         }
+        Debug.Log(state);
 
     }
 

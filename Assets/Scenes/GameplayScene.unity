@@ -2440,7 +2440,7 @@ GameObject:
   m_Layer: 10
   m_Name: R_FootCollider
   m_TagString: PlayerMakeDamage
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
@@ -3073,7 +3073,7 @@ GameObject:
   m_Layer: 10
   m_Name: R_HandCollider
   m_TagString: PlayerMakeDamage
-  m_Icon: {fileID: 7148428337604731935, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
@@ -4089,7 +4089,7 @@ GameObject:
   m_Layer: 10
   m_Name: L_FootCollider
   m_TagString: PlayerMakeDamage
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
@@ -4986,7 +4986,7 @@ GameObject:
   m_Layer: 10
   m_Name: L_HandCollider
   m_TagString: PlayerMakeDamage
-  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
@@ -6666,6 +6666,7 @@ GameObject:
   - component: {fileID: 2019363926}
   - component: {fileID: 2019363927}
   - component: {fileID: 2019363928}
+  - component: {fileID: 2019363929}
   m_Layer: 8
   m_Name: PlayerStickMan
   m_TagString: Untagged
@@ -6876,6 +6877,7 @@ MonoBehaviour:
   - {fileID: 865397617}
   skillPowerJump: 600
   skillPowerForce: 2000
+  testAnything: 
 --- !u!50 &2019363927
 Rigidbody2D:
   serializedVersion: 4
@@ -6938,6 +6940,25 @@ CapsuleCollider2D:
   m_Offset: {x: 0.07, y: 0.49446952}
   m_Size: {x: 0.110969014, y: 1.0104344}
   m_Direction: 0
+--- !u!320 &2019363929
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019363920}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: 2a49deed016e81d4493e59cbf633fc47, type: 2}
+  m_InitialState: 1
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: 9173185809624641823, guid: 2a49deed016e81d4493e59cbf633fc47, type: 2}
+    value: {fileID: 2019363922}
+  m_ExposedReferences:
+    m_References: []
 --- !u!1 &2022726749
 GameObject:
   m_ObjectHideFlags: 0

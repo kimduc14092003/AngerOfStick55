@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
     private int currentIndexAttackCombo;
     private string currentAnim;
     public float skillPowerJump,skillPowerForce;
-
+    public string testAnything;
     private void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour
         skeletonAnimation.AnimationState.End += OnCompleteAnim;
         listDeltaTimeInAnim = new List<float>();
     }
+
 
     // Update is called once per frame
     void Update()
@@ -308,35 +309,55 @@ public class PlayerController : MonoBehaviour
 
     private void HandleEvent(TrackEntry trackEntry, Spine.Event e)
     {
-        for (int i = 0; i < attackColliders.Length; i++)
-        {
-            attackColliders[i].SetActive(true);
-            StartCoroutine(TurnOffAttackColliders(i));
-        }
+
         if (e.Data.Name == "hit")
         {
-            float deltaTime = 0;
-            for (int i = 0; i < listDeltaTimeInAnim.Count; i++)
+            // Xử lý attack collider
+            switch (currentAnim)
             {
-                if (e.Time == listDeltaTimeInAnim[i])
-                {
-                    try
-                    {
-                        deltaTime = listDeltaTimeInAnim[i] - listDeltaTimeInAnim[i - 1];
+                case var value when value == kickComboAnim[0]:
+                case var value1 when value1 == kickComboAnim[2]:
+                case var value2 when value2 == kickComboAnim[4]:
 
-                    }
-                    catch
+                case var value3 when value3 == trampleComboAnim[0]:
                     {
-                        deltaTime =
-                        listDeltaTimeInAnim[i];
+                        KickRightHit();
+                        break;
                     }
-                    break;
-                }
+                case var value when value == kickComboAnim[1]:
+                case var value1 when value1 == kickComboAnim[3]:
+                case var value2 when value2 == kickComboAnim[5]:
+
+                case var value4 when value4 == trampleComboAnim[1]:
+
+                    {
+                        KickLeftHit();
+                        break;
+                    }
+                case var value when value == punchComboAnim[1]:
+                case var value2 when value2 == punchComboAnim[5]:
+                case var value3 when value3 == punchComboAnim[2]:
+
+                    {
+                        PunchLeftHit();
+                        break;
+                    }
+                case var value when value == punchComboAnim[0]:
+                case var value1 when value1 == punchComboAnim[3]:
+                case var value2 when value2 == punchComboAnim[4]:
+
+                    {
+                        PunchRightHit();
+                        break;
+                    }
             }
-            if (tempTime + deltaTime < Time.time)
+
+
+           /* for (int i = 0; i < attackColliders.Length; i++)
             {
-                //OnEndAttackCombo(trackEntry);
-            }
+                attackColliders[i].SetActive(true);
+                StartCoroutine(TurnOffAttackColliders(i));
+            }*/
         }
         
         // Xử lý event khi animation là Combo Kick Anim
@@ -427,6 +448,28 @@ public class PlayerController : MonoBehaviour
                 Invoke("UsingSkillDone", 0.25f);
             }
         }
+    }
+
+    private void KickLeftHit()
+    {
+        attackColliders[0].SetActive(true);
+        StartCoroutine(TurnOffAttackColliders(0));
+    }
+    private void PunchLeftHit()
+    {
+        attackColliders[1].SetActive(true);
+        StartCoroutine(TurnOffAttackColliders(1));
+    }
+    private void KickRightHit()
+    {
+        attackColliders[2].SetActive(true);
+        StartCoroutine(TurnOffAttackColliders(2));
+    }
+
+    private void PunchRightHit()
+    {
+        attackColliders[3].SetActive(true);
+        StartCoroutine(TurnOffAttackColliders(3));
     }
 
     private IEnumerator MoveToNewPos()
@@ -657,7 +700,6 @@ public class PlayerController : MonoBehaviour
             ReturnIdleAnim();
         }
 
-        GetListDeltaTimeOfEvent(skeletonAnimation.AnimationState.ToString());
     }
     IEnumerator PunchAttackCombo()
     {
@@ -724,14 +766,6 @@ public class PlayerController : MonoBehaviour
             {
                 yield return new WaitForSeconds(duration);
                 skeletonAnimation.AnimationState.SetAnimation(0, trampleComboAnim[1], false);
-                /*if(currentAnim== trampleComboAnim[1])
-                {
-                    skeletonAnimation.AnimationState.AddAnimation(0, trampleComboAnim[1], false,0);
-                }
-                else
-                {
-                }*/
-
                 if (tempTime + duration < Time.time)
                 {
                     ReturnIdleAnim();
@@ -775,26 +809,6 @@ public class PlayerController : MonoBehaviour
     private void UsingSkillDone()
     {
         isSkill = false;
-    }
-
-    public void GetListDeltaTimeOfEvent(string animationName)
-    {
-        listDeltaTimeInAnim.Clear();
-        var skeletonData = skeletonAnimation.Skeleton.Data;
-        var animation = skeletonData.FindAnimation(animationName);
-
-        foreach (var timeline in animation.Timelines)
-        {
-            var eventTimeline = timeline as Spine.EventTimeline;
-            if (eventTimeline != null)
-            {
-                foreach (var spineEvent in eventTimeline.Events)
-                {
-                    listDeltaTimeInAnim.Add(spineEvent.Time);
-                }
-            }
-        }
-
     }
 
     private IEnumerator TurnOffAttackColliders(int index)
