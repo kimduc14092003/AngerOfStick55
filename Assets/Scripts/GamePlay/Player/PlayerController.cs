@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour
     {
         if (currentAnim != GetCurrentAnimation(0).Name)
         {
-           // Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
+            Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
             currentAnim = GetCurrentAnimation(0).Name;
         }
     }
@@ -241,7 +241,6 @@ public class PlayerController : MonoBehaviour
     {
         if (trackEntry.ToString() == climpUpAnim)
         {
-            Debug.Log("Climp Up Done");
             HandlePlayerClimbUp();
         }
         //Debug.Log("End Anim " + trackEntry);
@@ -371,11 +370,10 @@ public class PlayerController : MonoBehaviour
             if (e.Data.Name == "begin")
             {
                 rb.velocity= Vector2.right * data.GetKickAt(currentIndexAttackCombo) * ((isFacingRight)?1:-1);
-                Debug.Log("Player Move" + data.GetKickAt(currentIndexAttackCombo));
             }
             if (e.Data.Name == "end")
             {
-                Debug.Log("Player Stop");
+                //Debug.Log("Player Stop");
                rb.velocity = Vector2.zero;
             }
         }
@@ -840,7 +838,14 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+}
 
-  
-
+public enum CharacterState
+{
+    Idle,
+    Run,
+    Jump,
+    Hit,
+    Dead,
+    
 }

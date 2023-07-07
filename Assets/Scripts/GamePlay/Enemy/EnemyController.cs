@@ -1,4 +1,5 @@
-﻿using Spine.Unity;
+﻿using DG.Tweening;
+using Spine.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -143,6 +144,18 @@ public class EnemyController : MonoBehaviour
         rb.AddForce(Vector2.down * fallDownForce, ForceMode2D.Impulse);
         HandleStopHitState();
 
+    }
+
+    //Đang xử lý
+    public void WasWrestle()
+    {
+        skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, false);
+        transform.parent.DORotate(new Vector3(0, 0, 270), 0.4f,RotateMode.LocalAxisAdd);
+
+    }
+    private void Test()
+    {
+        rb.AddForce(Vector2.zero);
     }
 
 }
