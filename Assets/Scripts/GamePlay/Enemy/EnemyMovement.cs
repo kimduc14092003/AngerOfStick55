@@ -9,31 +9,35 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private LayerMask layerMaskLedge;
     [SerializeField] private Transform attackZoneTrasform;
     [SerializeField] private Vector3 sizeOfAttackZone;
-    [SerializeField] private float speed;
-    [SerializeField] private float jumpPower;
+    [SerializeField] private float speed, jumpPower, health, moveTimeMin, moveTimeMax, waitTimeMin, waitTimeMax;
     [SerializeField] private LedgeDetection ledgeDetection;
     [SerializeField] private Vector2 offset1;
     [SerializeField] private CapsuleCollider2D capsuleCollider;
-    [SerializeField] private float health;
 
     [SpineAnimation]
     public string idleAnim, runAnim, jumpAnim, hitAnim, deadAnim;
     private SkeletonAnimation skeletonAnimation;
-                
     private Rigidbody2D rb;
-    private bool isFindTarget;
     private GameObject target;
-    private bool isTargetInAttackZone;
-    private bool isTargetInLeft=true;
+
+    private float tempTime;
+    private bool isFindTarget;
+    private bool isTargetInLeft = true;
     private bool isJumping;
     private bool isClimbing;
-    private bool isDead=false;
+    private bool isDead = false;
+    private bool isMoving = true;
+    private bool isIdle = true;
     private string currentAnim;
+
+    public bool isTargetInAttackZone;
+    public bool isCanAttack;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        skeletonAnimation= GetComponent<SkeletonAnimation>();
+        skeletonAnimation = GetComponent<SkeletonAnimation>();
+        rb.velocity = Vector2.left * speed * Time.deltaTime;
     }
 
     private void OnDrawGizmos()
@@ -43,6 +47,8 @@ public class EnemyMovement : MonoBehaviour
     }
     private void Update()
     {
+        GetCurrentAnimation();
+
         if (!isFindTarget)
         {
             DetectTargetCome();
@@ -61,14 +67,14 @@ public class EnemyMovement : MonoBehaviour
                 CharacterClimb();
             }
         }
-        GetCurrentAnimation();
+
     }
 
     private void GetCurrentAnimation()
     {
         if (currentAnim != GetCurrentAnimation(0).Name)
         {
-            //Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name+": "+Time.time);
+            Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name+": "+Time.time);
             currentAnim = GetCurrentAnimation(0).Name;
         }
     }
@@ -83,19 +89,36 @@ public class EnemyMovement : MonoBehaviour
     {
         if (!isFindTarget)
         {
-             Collider2D result = Physics2D.OverlapCircle(transform.position, radius, layerMaskLedge);
-             if(result != null)
+            Collider2D result = Physics2D.OverlapCircle(transform.position, radius, layerMaskLedge);
+            if (result != null)
             {
                 isFindTarget = true;
                 target = result.gameObject;
             }
-            
+
         }
+    }
+    public GameObject GetTarget()
+    {
+        return target;
     }
 
     private void DetectTargetInAttackZone()
     {
-       isTargetInAttackZone= Physics2D.OverlapBox(attackZoneTrasform.position, sizeOfAttackZone,0,layerMaskLedge);
+        if (isTargetInAttackZone)
+        {
+            bool result= Physics2D.OverlapBox(attackZoneTrasform.position, sizeOfAttackZone, 0, layerMaskLedge); 
+            if (!result)
+            {
+                isTargetInAttackZone = result;
+                isMoving = true;
+                isIdle = false;
+            }
+        }
+        else
+        {
+            isTargetInAttackZone = Physics2D.OverlapBox(attackZoneTrasform.position, sizeOfAttackZone, 0, layerMaskLedge);
+        }
     }
 
     private void MoveToAttackPlayer()
@@ -106,28 +129,91 @@ public class EnemyMovement : MonoBehaviour
         }
         else
         {
-            isTargetInLeft= false;
+            isTargetInLeft = false;
         }
+
 
         if (isTargetInAttackZone)
         {
-            
+            isMoving = false;
+            isIdle = true;
+            if(currentAnim!= idleAnim)
+            {
+                skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
+            }
         }
         else
         {
+            //moving time
+
             if (isTargetInLeft)
             {
-                if (target.transform.position.x + sizeOfAttackZone.x > transform.position.x) return;
+                if (isMoving)
+                {
+                    isIdle = false;
+                    //if()
+                    Debug.Log("Run1");
+                    if (target.transform.position.x + sizeOfAttackZone.x > transform.position.x)
+                    {
 
-                rb.velocity = new Vector2(speed*-1f * Time.deltaTime, rb.velocity.y);
+                    }
+                    else
+                    {
+                        rb.velocity = new Vector2(speed * -1f * Time.deltaTime, rb.velocity.y);
+
+                    }
+
+                }
+
             }
             else
             {
-                if (target.transform.position.x - sizeOfAttackZone.x  < transform.position.x ) return;
-                rb.velocity = new Vector2(speed * Time.deltaTime, rb.velocity.y);
+                if (isMoving)
+                {
+                    isIdle = false;
+
+                    Debug.Log("Run2");
+                    if (target.transform.position.x - sizeOfAttackZone.x < transform.position.x)
+                    {
+
+                    }
+                    else
+                    {
+                        rb.velocity = new Vector2(speed * Time.deltaTime, rb.velocity.y);
+                    }
+                }
+            }
+
+            //wait time
+            if (tempTime <= Time.time)
+            {
+                if (!isIdle)
+                {
+                    Debug.Log("idle");
+                    rb.velocity = new Vector2(0, 0);
+                    isIdle = true;
+                    isMoving = false;
+                    skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
+                    float waitTime = Random.Range(waitTimeMin, waitTimeMax);
+                    StartCoroutine(GetTempTimeInWait(waitTime));
+                }
             }
         }
+
     }
+
+    IEnumerator GetTempTimeInWait(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        float randomNum = Random.Range(moveTimeMin, moveTimeMax);
+        tempTime = Time.time + randomNum;
+        isIdle = false;
+        isMoving = true;
+        skeletonAnimation.AnimationState.SetAnimation(0, runAnim, true);
+
+        yield return new WaitForSeconds(randomNum);
+    }
+
     private void FlipCharacter()
     {
         if (!isTargetInLeft)

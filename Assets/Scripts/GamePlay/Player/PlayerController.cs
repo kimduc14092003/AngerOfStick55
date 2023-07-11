@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour
     {
         if (currentAnim != GetCurrentAnimation(0).Name)
         {
-            Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
+           // Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
             currentAnim = GetCurrentAnimation(0).Name;
         }
     }
@@ -819,6 +819,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
+            Debug.Log("Hit");
             // isThrowEnemy = true;
            
             EnemyController enemyController = collision.transform.parent.root.gameObject.GetComponent<EnemyController>();

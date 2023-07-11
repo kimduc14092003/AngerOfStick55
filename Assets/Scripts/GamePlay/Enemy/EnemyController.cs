@@ -15,14 +15,26 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private CapsuleCollider2D capsuleCollider;
     private Rigidbody2D rb;
     private Coroutine stopHitStateCoroutine;
+    private GameObject target;
+
+    [SpineAnimation]
+    public string[] enemyAttackAnim;
+    private EnemyMovement enemyMovement;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         skeletonAnimation = GetComponent<SkeletonAnimation>();
+        target=GetComponent<EnemyMovement>().GetTarget();
+        enemyMovement = GetComponent<EnemyMovement>();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
+        if (enemyMovement.isTargetInAttackZone)
+        {
+            EnemyAttack();
+        }
     }
 
     // Xử lý khi enemy nhận dame và chết
@@ -156,6 +168,12 @@ public class EnemyController : MonoBehaviour
     private void Test()
     {
         rb.AddForce(Vector2.zero);
+    }
+
+    private void EnemyAttack()
+    {
+        int randomAttack = Random.Range(0, enemyAttackAnim.Length);
+        skeletonAnimation.AnimationState.SetAnimation(0, enemyAttackAnim[randomAttack], false);
     }
 
 }
