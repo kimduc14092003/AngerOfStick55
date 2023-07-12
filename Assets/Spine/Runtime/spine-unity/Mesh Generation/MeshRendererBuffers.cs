@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -66,10 +66,10 @@ namespace Spine.Unity {
 		/// <summary>Returns true if the materials were modified since the buffers were last updated.</summary>
 		public bool MaterialsChangedInLastUpdate () {
 			int newSubmeshMaterials = submeshMaterials.Count;
-			var sharedMaterials = this.sharedMaterials;
+			Material[] sharedMaterials = this.sharedMaterials;
 			if (newSubmeshMaterials != sharedMaterials.Length) return true;
 
-			var submeshMaterialsItems = submeshMaterials.Items;
+			Material[] submeshMaterialsItems = submeshMaterials.Items;
 			for (int i = 0; i < newSubmeshMaterials; i++)
 				if (!Material.ReferenceEquals(submeshMaterialsItems[i], sharedMaterials[i])) return true; //if (submeshMaterialsItems[i].GetInstanceID() != sharedMaterials[i].GetInstanceID()) return true;
 
@@ -85,8 +85,8 @@ namespace Spine.Unity {
 				submeshMaterials.Count = newSize;
 			}
 
-			var submeshMaterialsItems = submeshMaterials.Items;
-			var instructionsItems = instructions.Items;
+			Material[] submeshMaterialsItems = submeshMaterials.Items;
+			SubmeshInstruction[] instructionsItems = instructions.Items;
 			for (int i = 0; i < newSize; i++)
 				submeshMaterialsItems[i] = instructionsItems[i].material;
 		}

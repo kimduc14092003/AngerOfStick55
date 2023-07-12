@@ -1,6 +1,6 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
  * Copyright (c) 2013-2022, Esoteric Software LLC
  *
@@ -47,9 +47,9 @@ namespace Spine.Unity.Examples {
 	/// At the end of the fadeout, the event delegate <c>OnFadeoutComplete</c> is called, to which you can bind e.g.
 	/// a method that disables or destroys the entire GameObject.
 	/// </summary>
-	[RequireComponent(typeof(SkeletonRenderTexture))]
+	[RequireComponent(typeof(SkeletonRenderTextureBase))]
 	public class SkeletonRenderTextureFadeout : MonoBehaviour {
-		SkeletonRenderTexture skeletonRenderTexture;
+		SkeletonRenderTextureBase skeletonRenderTexture;
 
 		public float fadeoutSeconds = 2.0f;
 		protected float fadeoutSecondsRemaining;
@@ -58,7 +58,7 @@ namespace Spine.Unity.Examples {
 		public event FadeoutCallback OnFadeoutComplete;
 
 		protected void Awake () {
-			skeletonRenderTexture = this.GetComponent<SkeletonRenderTexture>();
+			skeletonRenderTexture = this.GetComponent<SkeletonRenderTextureBase>();
 		}
 
 		protected void OnEnable () {

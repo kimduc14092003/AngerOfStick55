@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -63,12 +63,12 @@ namespace Spine.Unity.Examples {
 		}
 
 		public void Equip (EquipAssetExample asset) {
-			var equipType = asset.equipType;
+			EquipType equipType = asset.equipType;
 			EquipHook howToEquip = equippables.Find(x => x.type == equipType);
 
-			var skeletonData = skeletonDataAsset.GetSkeletonData(true);
+			SkeletonData skeletonData = skeletonDataAsset.GetSkeletonData(true);
 			int slotIndex = skeletonData.FindSlot(howToEquip.slot).Index;
-			var attachment = GenerateAttachmentFromEquipAsset(asset, slotIndex, howToEquip.templateSkin, howToEquip.templateAttachment);
+			Attachment attachment = GenerateAttachmentFromEquipAsset(asset, slotIndex, howToEquip.templateSkin, howToEquip.templateAttachment);
 			target.Equip(slotIndex, howToEquip.templateAttachment, attachment);
 		}
 
@@ -77,8 +77,8 @@ namespace Spine.Unity.Examples {
 			cachedAttachments.TryGetValue(asset, out attachment);
 
 			if (attachment == null) {
-				var skeletonData = skeletonDataAsset.GetSkeletonData(true);
-				var templateSkin = skeletonData.FindSkin(templateSkinName);
+				SkeletonData skeletonData = skeletonDataAsset.GetSkeletonData(true);
+				Skin templateSkin = skeletonData.FindSkin(templateSkinName);
 				Attachment templateAttachment = templateSkin.GetAttachment(slotIndex, templateAttachmentName);
 				attachment = templateAttachment.GetRemappedClone(asset.sprite, sourceMaterial, premultiplyAlpha: this.applyPMA);
 				// Note: Each call to `GetRemappedClone()` with parameter `premultiplyAlpha` set to `true` creates

@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -95,7 +95,7 @@ namespace Spine {
 		/// <summary>The dopesheet FPS in Spine, or zero if nonessential data was not exported.</summary>
 		public float Fps { get { return fps; } set { fps = value; } }
 
-		// --- Bones.
+		// --- Bones
 
 		/// <summary>
 		/// Finds a bone by comparing each bone's name.
@@ -103,7 +103,7 @@ namespace Spine {
 		/// <returns>May be null.</returns>
 		public BoneData FindBone (string boneName) {
 			if (boneName == null) throw new ArgumentNullException("boneName", "boneName cannot be null.");
-			var bones = this.bones.Items;
+			BoneData[] bones = this.bones.Items;
 			for (int i = 0, n = this.bones.Count; i < n; i++) {
 				BoneData bone = bones[i];
 				if (bone.name == boneName) return bone;
@@ -111,12 +111,12 @@ namespace Spine {
 			return null;
 		}
 
-		// --- Slots.
+		// --- Slots
 
 		/// <returns>May be null.</returns>
 		public SlotData FindSlot (string slotName) {
 			if (slotName == null) throw new ArgumentNullException("slotName", "slotName cannot be null.");
-			var slots = this.slots.Items;
+			SlotData[] slots = this.slots.Items;
 			for (int i = 0, n = this.slots.Count; i < n; i++) {
 				SlotData slot = slots[i];
 				if (slot.name == slotName) return slot;
@@ -124,7 +124,7 @@ namespace Spine {
 			return null;
 		}
 
-		// --- Skins.
+		// --- Skins
 
 		/// <returns>May be null.</returns>
 		public Skin FindSkin (string skinName) {
@@ -134,7 +134,7 @@ namespace Spine {
 			return null;
 		}
 
-		// --- Events.
+		// --- Events
 
 		/// <returns>May be null.</returns>
 		public EventData FindEvent (string eventDataName) {
@@ -144,12 +144,12 @@ namespace Spine {
 			return null;
 		}
 
-		// --- Animations.
+		// --- Animations
 
 		/// <returns>May be null.</returns>
 		public Animation FindAnimation (string animationName) {
 			if (animationName == null) throw new ArgumentNullException("animationName", "animationName cannot be null.");
-			var animations = this.animations.Items;
+			Animation[] animations = this.animations.Items;
 			for (int i = 0, n = this.animations.Count; i < n; i++) {
 				Animation animation = animations[i];
 				if (animation.name == animationName) return animation;
@@ -157,12 +157,12 @@ namespace Spine {
 			return null;
 		}
 
-		// --- IK constraints.
+		// --- IK constraints
 
 		/// <returns>May be null.</returns>
 		public IkConstraintData FindIkConstraint (string constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			var ikConstraints = this.ikConstraints.Items;
+			IkConstraintData[] ikConstraints = this.ikConstraints.Items;
 			for (int i = 0, n = this.ikConstraints.Count; i < n; i++) {
 				IkConstraintData ikConstraint = ikConstraints[i];
 				if (ikConstraint.name == constraintName) return ikConstraint;
@@ -170,12 +170,12 @@ namespace Spine {
 			return null;
 		}
 
-		// --- Transform constraints.
+		// --- Transform constraints
 
 		/// <returns>May be null.</returns>
 		public TransformConstraintData FindTransformConstraint (string constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			var transformConstraints = this.transformConstraints.Items;
+			TransformConstraintData[] transformConstraints = this.transformConstraints.Items;
 			for (int i = 0, n = this.transformConstraints.Count; i < n; i++) {
 				TransformConstraintData transformConstraint = transformConstraints[i];
 				if (transformConstraint.name == constraintName) return transformConstraint;
@@ -183,12 +183,16 @@ namespace Spine {
 			return null;
 		}
 
-		// --- Path constraints.
+		// --- Path constraints
 
+		/// <summary>
+		/// Finds a path constraint by comparing each path constraint's name. It is more efficient to cache the results of this method
+		/// than to call it multiple times.
+		/// </summary>
 		/// <returns>May be null.</returns>
 		public PathConstraintData FindPathConstraint (string constraintName) {
 			if (constraintName == null) throw new ArgumentNullException("constraintName", "constraintName cannot be null.");
-			var pathConstraints = this.pathConstraints.Items;
+			PathConstraintData[] pathConstraints = this.pathConstraints.Items;
 			for (int i = 0, n = this.pathConstraints.Count; i < n; i++) {
 				PathConstraintData constraint = pathConstraints[i];
 				if (constraint.name.Equals(constraintName)) return constraint;

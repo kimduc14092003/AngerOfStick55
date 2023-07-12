@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -49,9 +49,9 @@ namespace Spine.Unity.Examples {
 		}
 
 		void Update () {
-			var mousePosition = Input.mousePosition;
-			var worldMousePosition = cam.ScreenToWorldPoint(mousePosition);
-			var skeletonSpacePoint = skeletonAnimation.transform.InverseTransformPoint(worldMousePosition);
+			Vector3 mousePosition = Input.mousePosition;
+			Vector3 worldMousePosition = cam.ScreenToWorldPoint(mousePosition);
+			Vector3 skeletonSpacePoint = skeletonAnimation.transform.InverseTransformPoint(worldMousePosition);
 			skeletonSpacePoint.x *= skeletonAnimation.Skeleton.ScaleX;
 			skeletonSpacePoint.y *= skeletonAnimation.Skeleton.ScaleY;
 			bone.SetLocalPosition(skeletonSpacePoint);

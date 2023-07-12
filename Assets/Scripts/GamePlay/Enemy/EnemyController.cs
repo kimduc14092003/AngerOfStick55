@@ -1,13 +1,16 @@
 ﻿using DG.Tweening;
+using Spine;
 using Spine.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using RotateMode = DG.Tweening.RotateMode;
 
 public class EnemyController : MonoBehaviour
 {
-    public float thrust, throwUpForce,fallDownForce;
-    private bool isDead = false;
+    public float thrust, throwUpForce,fallDownForce,flyAwayForce,delayToAttack,currentDelayToAttack;
+    private bool isDead = false, isAttack=false;
     private SkeletonAnimation skeletonAnimation;
     [SerializeField] private float health;
     [SpineAnimation]
@@ -27,13 +30,21 @@ public class EnemyController : MonoBehaviour
         skeletonAnimation = GetComponent<SkeletonAnimation>();
         target=GetComponent<EnemyMovement>().GetTarget();
         enemyMovement = GetComponent<EnemyMovement>();
+        skeletonAnimation.AnimationState.Complete += OnCompleteAttackAnim;
     }
 
     private void Update()
     {
         if (enemyMovement.isTargetInAttackZone)
         {
-            EnemyAttack();
+            if (currentDelayToAttack <= 0)
+            {
+                EnemyAttack();
+            }
+            else
+            {
+                currentDelayToAttack -= Time.deltaTime;
+            }
         }
     }
 
@@ -72,11 +83,10 @@ public class EnemyController : MonoBehaviour
                 }
             case CharacterTakeHitState.FlyAway:
                 {
-                    KnockBack(transformFrom);
+                    FlyAway(transformFrom);
                     break;
                 }
         }
-        Debug.Log(state);
 
     }
 
@@ -143,7 +153,7 @@ public class EnemyController : MonoBehaviour
             directionForce.x = -1;
         }
         directionForce.y = 1;
-        rb.AddForce(new Vector2( directionForce.x*0.3f,directionForce.y) * throwUpForce, ForceMode2D.Impulse);
+        rb.AddForce(new Vector2( directionForce.x*0.75f,directionForce.y) * throwUpForce, ForceMode2D.Impulse);
         HandleStopHitState();
 
     }
@@ -157,6 +167,26 @@ public class EnemyController : MonoBehaviour
         HandleStopHitState();
 
     }
+    private void FlyAway(Transform transformFrom)
+    {
+        skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
+        skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true, 0.5f);
+        
+        Vector2 directionForce = transform.position - transformFrom.position;
+        directionForce = directionForce.normalized;
+        if (directionForce.x > 0)
+        {
+            directionForce.x = 1;
+        }
+        else
+        {
+            directionForce.x = -1;
+        }
+        directionForce.y = 1;
+        rb.AddForce(new Vector2(directionForce.x , directionForce.y) * flyAwayForce, ForceMode2D.Impulse);
+        //HandleStopHitState();
+    }
+
 
     //Đang xử lý
     public void WasWrestle()
@@ -165,17 +195,25 @@ public class EnemyController : MonoBehaviour
         transform.parent.DORotate(new Vector3(0, 0, 270), 0.4f,RotateMode.LocalAxisAdd);
 
     }
-    private void Test()
-    {
-        rb.AddForce(Vector2.zero);
-    }
-
     private void EnemyAttack()
     {
-        int randomAttack = Random.Range(0, enemyAttackAnim.Length);
-        skeletonAnimation.AnimationState.SetAnimation(0, enemyAttackAnim[randomAttack], false);
-    }
+        if (!isAttack)
+        {
+            isAttack = true;
+            int randomAttack = Random.Range(0, enemyAttackAnim.Length);
+            skeletonAnimation.AnimationState.SetAnimation(0, enemyAttackAnim[randomAttack], false);
+        }
 
+    }
+    private void OnCompleteAttackAnim(TrackEntry trackEntry)
+    {
+        if (enemyAttackAnim.Contains(trackEntry.ToString()))
+        {
+            currentDelayToAttack = delayToAttack;
+            isAttack = false;
+
+        }
+    }
 }
 
 public enum CharacterTakeHitState

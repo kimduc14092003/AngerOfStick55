@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -110,7 +110,7 @@ namespace Spine.Unity {
 				return;
 			}
 
-			var skeleton = hierarchy.Skeleton;
+			Skeleton skeleton = hierarchy.Skeleton;
 
 			if (bone == null) {
 				if (string.IsNullOrEmpty(boneName)) return;
@@ -124,7 +124,7 @@ namespace Spine.Unity {
 
 			float positionScale = hierarchy.PositionScale;
 
-			var thisTransform = cachedTransform;
+			Transform thisTransform = cachedTransform;
 			float skeletonFlipRotation = Mathf.Sign(skeleton.ScaleX * skeleton.ScaleY);
 			if (mode == Mode.Follow) {
 				switch (phase) {

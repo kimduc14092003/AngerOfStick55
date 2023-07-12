@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -37,6 +37,13 @@ namespace Spine.Unity {
 		//Reserved 4 for OnlyEventTimelines
 	};
 
+	public enum UpdateTiming {
+		ManualUpdate = 0,
+		InUpdate,
+		InFixedUpdate
+	}
+
+	public delegate void ISkeletonAnimationDelegate (ISkeletonAnimation animated);
 	public delegate void UpdateBonesDelegate (ISkeletonAnimation animated);
 
 	public interface ISpineComponent { }
@@ -49,10 +56,12 @@ namespace Spine.Unity {
 
 	/// <summary>A Spine-Unity Component that animates a Skeleton but not necessarily with a Spine.AnimationState.</summary>
 	public interface ISkeletonAnimation : ISpineComponent {
+		event ISkeletonAnimationDelegate OnAnimationRebuild;
 		event UpdateBonesDelegate UpdateLocal;
 		event UpdateBonesDelegate UpdateWorld;
 		event UpdateBonesDelegate UpdateComplete;
 		Skeleton Skeleton { get; }
+		UpdateTiming UpdateTiming { get; set; }
 	}
 
 	/// <summary>Holds a reference to a SkeletonDataAsset.</summary>
@@ -75,6 +84,11 @@ namespace Spine.Unity {
 	public interface IAnimationStateComponent : ISpineComponent {
 		/// <summary>Gets the Spine.AnimationState of the animated Spine Component. This is equivalent to SkeletonAnimation.state.</summary>
 		AnimationState AnimationState { get; }
+		/// <summary>If enabled, AnimationState time is advanced by Unscaled Game Time
+		/// (<c>Time.unscaledDeltaTime</c> instead of the default Game Time(<c>Time.deltaTime</c>).
+		/// to animate independent of game <c>Time.timeScale</c>.
+		/// Instance SkeletonGraphic.timeScale and SkeletonAnimation.timeScale will still be applied.</summary>
+		bool UnscaledTime { get; set; }
 	}
 
 	/// <summary>A Spine-Unity Component that holds a reference to a SkeletonRenderer.</summary>

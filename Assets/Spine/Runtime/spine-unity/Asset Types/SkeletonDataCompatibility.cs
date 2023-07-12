@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -41,8 +41,8 @@ namespace Spine.Unity {
 	public static class SkeletonDataCompatibility {
 
 #if UNITY_EDITOR
-		static readonly int[][] compatibleBinaryVersions = { new[] { 4, 0, 0 } };
-		static readonly int[][] compatibleJsonVersions = { new[] { 4, 0, 0 } };
+		static readonly int[][] compatibleBinaryVersions = { new[] { 4, 1, 0 } };
+		static readonly int[][] compatibleJsonVersions = { new[] { 4, 1, 0 } };
 
 		static bool wasVersionDialogShown = false;
 		static readonly Regex jsonVersionRegex = new Regex(@"""spine""\s*:\s*""([^""]+)""", RegexOptions.CultureInvariant);
@@ -106,7 +106,7 @@ namespace Spine.Unity {
 
 			if (fileVersion.sourceType == SourceType.Binary) {
 				try {
-					using (var memStream = new MemoryStream(asset.bytes)) {
+					using (MemoryStream memStream = new MemoryStream(asset.bytes)) {
 						fileVersion.rawVersion = SkeletonBinary.GetVersionString(memStream);
 					}
 				} catch (System.Exception e) {
@@ -126,7 +126,7 @@ namespace Spine.Unity {
 						return null;
 					}
 
-					var root = obj as Dictionary<string, object>;
+					Dictionary<string, object> root = obj as Dictionary<string, object>;
 					if (root == null) {
 						problemDescription = string.Format("'{0}' is not compatible JSON. Parser returned an incorrect type while parsing version info.", asset.name);
 						isSpineSkeletonData = false;
@@ -134,7 +134,7 @@ namespace Spine.Unity {
 					}
 
 					if (root.ContainsKey("skeleton")) {
-						var skeletonInfo = (Dictionary<string, object>)root["skeleton"];
+						Dictionary<string, object> skeletonInfo = (Dictionary<string, object>)root["skeleton"];
 						object jv;
 						skeletonInfo.TryGetValue("spine", out jv);
 						fileVersion.rawVersion = jv as string;
@@ -148,7 +148,7 @@ namespace Spine.Unity {
 				return null;
 			}
 
-			var versionSplit = fileVersion.rawVersion.Split('.');
+			string[] versionSplit = fileVersion.rawVersion.Split('.');
 			try {
 				fileVersion.version = new[]{ int.Parse(versionSplit[0], CultureInfo.InvariantCulture),
 									int.Parse(versionSplit[1], CultureInfo.InvariantCulture) };
@@ -194,7 +194,7 @@ namespace Spine.Unity {
 			info.compatibleVersions = (fileVersion.sourceType == SourceType.Binary) ? compatibleBinaryVersions
 				: compatibleJsonVersions;
 
-			foreach (var compatibleVersion in info.compatibleVersions) {
+			foreach (int[] compatibleVersion in info.compatibleVersions) {
 				bool majorMatch = fileVersion.version[0] == compatibleVersion[0];
 				bool minorMatch = fileVersion.version[1] == compatibleVersion[1];
 				if (majorMatch && minorMatch) {

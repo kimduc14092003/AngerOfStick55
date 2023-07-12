@@ -23,8 +23,8 @@ public class PlayerController : MonoBehaviour
     [Header("Spine Animation")]
     [SpineAnimation]
     public string idleAnim;
-    [SpineAnimation] public string runAnim,jumpAnim,hitAnim,deadAnim,jumpKick1Anim,jumpKick2Anim,skillAnim,wrestleAnim,comboKick0Anim,
-                                    comboKick1Anim,comboPunch,climpAnim,climpUpAnim,climpDownAnim,crouchAnim;
+    [SpineAnimation] public string runAnim,jumpAnim,hitAnim,deadAnim,jumpKick1Anim,jumpKick2Anim,skillAnim,wrestleAnim,
+                                    climpAnim,climpUpAnim,climpDownAnim,crouchAnim;
     [SpineAnimation] public string[] kickComboAnim, punchComboAnim, trampleComboAnim,skillComboAnim;
 
     private float horizontalValue,tempTime;
@@ -36,9 +36,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CapsuleCollider2D capsuleCollider;
     [SerializeField] private LedgeDetection ledgeDetection;
     [SerializeField] private GameObject[] attackColliders;
+    [SerializeField] private GameObject explosiveGameObject;
     public Spine.Animation TargetAnimation { get; private set; }
 
-    private List<float> listDeltaTimeInAnim;
     private int currentIndexAttackCombo;
     private string currentAnim;
     public float skillPowerJump,skillPowerForce;
@@ -52,7 +52,6 @@ public class PlayerController : MonoBehaviour
         skeletonAnimation.state.Event += HandleEvent;
         skeletonAnimation.AnimationState.Complete += OnEndAnim;
         skeletonAnimation.AnimationState.End += OnCompleteAnim;
-        listDeltaTimeInAnim = new List<float>();
     }
 
 
@@ -92,6 +91,7 @@ public class PlayerController : MonoBehaviour
 
     private bool IsCanThrowEnemy()
     {
+        return false;
         return Physics2D.OverlapCircle(attackColliders[1].transform.position, 0.5f, enemyLayer);
     }
     private void OnDrawGizmos()
@@ -227,14 +227,9 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator SetNewPosClimpUp(float time)
     {
-        yield return 0;
-        yield return 0;
-        yield return 0;
-        yield return 0;
-        yield return 0;
-        yield return 0;
-        yield return 0;
         transform.position = transform.position + Vector3.up*offsetBeginClimb.y;
+      
+        yield return 0;
     }
 
     private void OnEndAnim(TrackEntry trackEntry)
@@ -243,47 +238,13 @@ public class PlayerController : MonoBehaviour
         {
             HandlePlayerClimbUp();
         }
-        //Debug.Log("End Anim " + trackEntry);
-        // 
-        /*if()
-        PlayAnimation(idleAnim, 0);*/
-        /*string[] listAttackEntry = new string[] {comboKick0Anim,comboKick1Anim,comboPunch };
-        for(int i = 0; i < listAttackEntry.Length; i++)
-        {
-            if (listAttackEntry[i] == trackEntry.ToString())
-            {
-                StartCoroutine(MoveToNewPos());
 
-            }
-        }*/
-
-        // Test Skill
-        /*
-        if (trackEntry.ToString() == skillComboAnim[0])
+        if (trackEntry.ToString() == punchComboAnim[5])
         {
-            rb.AddForce(Vector2.up * jumpingPower);
-            skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[1], false);
+            explosiveGameObject.transform.position = attackColliders[1].transform.position;
+            explosiveGameObject.SetActive(true);
 
         }
-        if (trackEntry.ToString() == skillComboAnim[2])
-        {
-            TestFall();
-        }
-        if (trackEntry.ToString() == skillComboAnim[3])
-        {
-            //skeletonAnimation.AnimationState.SetAnimation(0, skillComboAnim[4], false);
-        }
-
-        if (trackEntry.ToString() == skillComboAnim[4])
-        {
-        }*/
-
-
-        /*if (trackEntry.ToString() == skillComboAnim[1])
-        {
-            rb.velocity = Vector2.zero;
-            rb.gravityScale = 0;
-        }*/
     }
 
     private void HandlePlayerClimbUp()
@@ -617,7 +578,7 @@ public class PlayerController : MonoBehaviour
 
     private void ThrowEnemy()
     {
-        if (isThrowEnemy)
+       /* if (isThrowEnemy)
         {
             if (isThrowOnce)
             {
@@ -626,7 +587,7 @@ public class PlayerController : MonoBehaviour
                 print("Throw Enemy");
                 isThrowOnce = false;
             }
-        }
+        }*/
     }
     private void ThrowEnemyDone()
     {
@@ -676,14 +637,14 @@ public class PlayerController : MonoBehaviour
             };
         }
         else
-        if (isThrowEnemy)
+        /*if (isThrowEnemy)
         {
             if (skeletonAnimation.AnimationState.ToString() != wrestleAnim)
             {
                 skeletonAnimation.AnimationState.SetAnimation(0, wrestleAnim, false);
             }
         }
-        else
+        else*/
         if (horizontalValue != 0&&!isDelayForCombo)
         {
             if (skeletonAnimation.AnimationState.ToString() != runAnim)
@@ -819,7 +780,6 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            Debug.Log("Hit");
             // isThrowEnemy = true;
            
             EnemyController enemyController = collision.transform.parent.root.gameObject.GetComponent<EnemyController>();
@@ -831,6 +791,12 @@ public class PlayerController : MonoBehaviour
             if (currentAnim == punchComboAnim[4])
             {
                 enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.FallDown);
+
+            }
+            else
+            if (currentAnim == punchComboAnim[5])
+            {
+                enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.FlyAway);
 
             }
             else

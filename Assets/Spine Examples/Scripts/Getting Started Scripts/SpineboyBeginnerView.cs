@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -75,7 +75,7 @@ namespace Spine.Unity.Examples {
 			}
 
 			// Detect changes in model.state
-			var currentModelState = model.state;
+			SpineBeginnerBodyState currentModelState = model.state;
 
 			if (previousViewState != currentModelState) {
 				PlayNewStableAnimation();
@@ -85,7 +85,7 @@ namespace Spine.Unity.Examples {
 		}
 
 		void PlayNewStableAnimation () {
-			var newModelState = model.state;
+			SpineBeginnerBodyState newModelState = model.state;
 			Animation nextAnimation;
 
 			// Add conditionals to not interrupt transient animations.
@@ -115,7 +115,7 @@ namespace Spine.Unity.Examples {
 
 		[ContextMenu("Check Tracks")]
 		void CheckTracks () {
-			var state = skeletonAnimation.AnimationState;
+			AnimationState state = skeletonAnimation.AnimationState;
 			Debug.Log(state.GetCurrent(0));
 			Debug.Log(state.GetCurrent(1));
 		}
@@ -123,13 +123,13 @@ namespace Spine.Unity.Examples {
 		#region Transient Actions
 		public void PlayShoot () {
 			// Play the shoot animation on track 1.
-			var shootTrack = skeletonAnimation.AnimationState.SetAnimation(1, shoot, false);
+			TrackEntry shootTrack = skeletonAnimation.AnimationState.SetAnimation(1, shoot, false);
 			shootTrack.AttachmentThreshold = 1f;
 			shootTrack.MixDuration = 0f;
 			skeletonAnimation.state.AddEmptyAnimation(1, 0.5f, 0.1f);
 
 			// Play the aim animation on track 2 to aim at the mouse target.
-			var aimTrack = skeletonAnimation.AnimationState.SetAnimation(2, aim, false);
+			TrackEntry aimTrack = skeletonAnimation.AnimationState.SetAnimation(2, aim, false);
 			aimTrack.AttachmentThreshold = 1f;
 			aimTrack.MixDuration = 0f;
 			skeletonAnimation.state.AddEmptyAnimation(2, 0.5f, 0.1f);
@@ -142,7 +142,7 @@ namespace Spine.Unity.Examples {
 
 		public void StartPlayingAim () {
 			// Play the aim animation on track 2 to aim at the mouse target.
-			var aimTrack = skeletonAnimation.AnimationState.SetAnimation(2, aim, true);
+			TrackEntry aimTrack = skeletonAnimation.AnimationState.SetAnimation(2, aim, true);
 			aimTrack.AttachmentThreshold = 1f;
 			aimTrack.MixDuration = 0f;
 		}

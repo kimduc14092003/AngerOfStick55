@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -38,8 +38,8 @@ namespace Spine {
 	/// See <a href="http://esotericsoftware.com/spine-transform-constraints">Transform constraints</a> in the Spine User Guide.</para>
 	/// </summary>
 	public class TransformConstraint : IUpdatable {
-		internal TransformConstraintData data;
-		internal ExposedList<Bone> bones;
+		internal readonly TransformConstraintData data;
+		internal readonly ExposedList<Bone> bones;
 		internal Bone target;
 		internal float mixRotate, mixX, mixY, mixScaleX, mixScaleY, mixShearY;
 
@@ -57,9 +57,9 @@ namespace Spine {
 			mixShearY = data.mixShearY;
 			bones = new ExposedList<Bone>();
 			foreach (BoneData boneData in data.bones)
-				bones.Add(skeleton.FindBone(boneData.name));
+				bones.Add(skeleton.bones.Items[boneData.index]);
 
-			target = skeleton.FindBone(data.target.name);
+			target = skeleton.bones.Items[data.target.index];
 		}
 
 		/// <summary>Copy constructor.</summary>
@@ -80,7 +80,7 @@ namespace Spine {
 		}
 
 		public void Update () {
-			if (mixRotate == 0 && mixX == 0 && mixY == 0 && mixScaleX == 0 && mixScaleX == 0 && mixShearY == 0) return;
+			if (mixRotate == 0 && mixX == 0 && mixY == 0 && mixScaleX == 0 && mixScaleY == 0 && mixShearY == 0) return;
 			if (data.local) {
 				if (data.relative)
 					ApplyRelativeLocal();
@@ -104,7 +104,7 @@ namespace Spine {
 			float degRadReflect = ta * td - tb * tc > 0 ? MathUtils.DegRad : -MathUtils.DegRad;
 			float offsetRotation = data.offsetRotation * degRadReflect, offsetShearY = data.offsetShearY * degRadReflect;
 
-			var bones = this.bones.Items;
+			Bone[] bones = this.bones.Items;
 			for (int i = 0, n = this.bones.Count; i < n; i++) {
 				Bone bone = bones[i];
 
@@ -171,7 +171,7 @@ namespace Spine {
 			float degRadReflect = ta * td - tb * tc > 0 ? MathUtils.DegRad : -MathUtils.DegRad;
 			float offsetRotation = data.offsetRotation * degRadReflect, offsetShearY = data.offsetShearY * degRadReflect;
 
-			var bones = this.bones.Items;
+			Bone[] bones = this.bones.Items;
 			for (int i = 0, n = this.bones.Count; i < n; i++) {
 				Bone bone = bones[i];
 
@@ -231,7 +231,7 @@ namespace Spine {
 
 			Bone target = this.target;
 
-			var bones = this.bones.Items;
+			Bone[] bones = this.bones.Items;
 			for (int i = 0, n = this.bones.Count; i < n; i++) {
 				Bone bone = bones[i];
 
@@ -269,7 +269,7 @@ namespace Spine {
 
 			Bone target = this.target;
 
-			var bones = this.bones.Items;
+			Bone[] bones = this.bones.Items;
 			for (int i = 0, n = this.bones.Count; i < n; i++) {
 				Bone bone = bones[i];
 

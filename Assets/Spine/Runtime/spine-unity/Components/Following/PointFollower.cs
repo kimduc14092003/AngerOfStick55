@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -90,7 +90,7 @@ namespace Spine.Unity {
 			bone = null;
 			point = null;
 			if (!string.IsNullOrEmpty(pointAttachmentName)) {
-				var skeleton = skeletonRenderer.Skeleton;
+				Skeleton skeleton = skeletonRenderer.Skeleton;
 
 				Slot slot = skeleton.FindSlot(slotName);
 				if (slot != null) {
@@ -128,7 +128,7 @@ namespace Spine.Unity {
 				if (followRotation) {
 					float halfRotation = rotation * 0.5f * Mathf.Deg2Rad;
 
-					var q = default(Quaternion);
+					Quaternion q = default(Quaternion);
 					q.z = Mathf.Sin(halfRotation);
 					q.w = Mathf.Cos(halfRotation);
 					thisTransform.localRotation = q;

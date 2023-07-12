@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -92,7 +92,7 @@ namespace Spine.Unity.Examples {
 					go.hideFlags = GhostHideFlags;
 				}
 
-				var skeletonAnimation = skeletonRenderer as Spine.Unity.IAnimationStateComponent;
+				IAnimationStateComponent skeletonAnimation = skeletonRenderer as Spine.Unity.IAnimationStateComponent;
 				if (skeletonAnimation != null)
 					skeletonAnimation.AnimationState.Event += OnEvent;
 			}
@@ -130,7 +130,7 @@ namespace Spine.Unity.Examples {
 
 				Material[] materials = meshRenderer.sharedMaterials;
 				for (int i = 0; i < materials.Length; i++) {
-					var originalMat = materials[i];
+					Material originalMat = materials[i];
 					Material ghostMat;
 					if (!materialTable.ContainsKey(originalMat)) {
 						ghostMat = new Material(originalMat) {
@@ -149,7 +149,7 @@ namespace Spine.Unity.Examples {
 					materials[i] = ghostMat;
 				}
 
-				var goTransform = go.transform;
+				Transform goTransform = go.transform;
 				goTransform.parent = transform;
 
 				pool[poolIndex].Initialize(meshFilter.sharedMesh, materials, color, additive, fadeSpeed, meshRenderer.sortingLayerID, (sortWithDistanceOnly) ? meshRenderer.sortingOrder : meshRenderer.sortingOrder - 1);
@@ -175,7 +175,7 @@ namespace Spine.Unity.Examples {
 					if (pool[i] != null) pool[i].Cleanup();
 			}
 
-			foreach (var mat in materialTable.Values)
+			foreach (Material mat in materialTable.Values)
 				Destroy(mat);
 		}
 

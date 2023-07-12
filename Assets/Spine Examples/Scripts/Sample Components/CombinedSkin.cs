@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -40,21 +40,21 @@ namespace Spine.Unity.Examples {
 		Skin combinedSkin;
 
 		void Start () {
-			var skeletonComponent = GetComponent<ISkeletonComponent>();
+			ISkeletonComponent skeletonComponent = GetComponent<ISkeletonComponent>();
 			if (skeletonComponent == null) return;
-			var skeleton = skeletonComponent.Skeleton;
+			Skeleton skeleton = skeletonComponent.Skeleton;
 			if (skeleton == null) return;
 
 			combinedSkin = combinedSkin ?? new Skin("combined");
 			combinedSkin.Clear();
-			foreach (var skinName in skinsToCombine) {
-				var skin = skeleton.Data.FindSkin(skinName);
+			foreach (string skinName in skinsToCombine) {
+				Skin skin = skeleton.Data.FindSkin(skinName);
 				if (skin != null) combinedSkin.AddSkin(skin);
 			}
 
 			skeleton.SetSkin(combinedSkin);
 			skeleton.SetToSetupPose();
-			var animationStateComponent = skeletonComponent as IAnimationStateComponent;
+			IAnimationStateComponent animationStateComponent = skeletonComponent as IAnimationStateComponent;
 			if (animationStateComponent != null) animationStateComponent.AnimationState.Apply(skeleton);
 		}
 	}

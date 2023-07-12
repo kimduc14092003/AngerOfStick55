@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -166,7 +166,7 @@ namespace Spine.Unity {
 					if (followLocalScale && bone.ScaleX < 0) // Negate rotation from negative scaleX. Don't use negative determinant. local scaleY doesn't factor into used rotation.
 						halfRotation += Mathf.PI * 0.5f;
 
-					var q = default(Quaternion);
+					Quaternion q = default(Quaternion);
 					q.z = Mathf.Sin(halfRotation);
 					q.w = Mathf.Cos(halfRotation);
 					thisTransform.localRotation = q;
@@ -209,15 +209,16 @@ namespace Spine.Unity {
 			}
 
 			Bone parentBone = bone.Parent;
-			Vector3 localScale = new Vector3(1f, 1f, 1f);
-			if (followParentWorldScale && parentBone != null)
-				localScale = new Vector3(parentBone.WorldScaleX, parentBone.WorldScaleY, 1f);
-			if (followLocalScale)
-				localScale.Scale(new Vector3(bone.ScaleX, bone.ScaleY, 1f));
-			if (followSkeletonFlip)
-				localScale.y *= Mathf.Sign(bone.Skeleton.ScaleX * bone.Skeleton.ScaleY) * additionalFlipScale;
-			thisTransform.localScale = localScale;
+			if (followParentWorldScale || followLocalScale || followSkeletonFlip) {
+				Vector3 localScale = new Vector3(1f, 1f, 1f);
+				if (followParentWorldScale && parentBone != null)
+					localScale = new Vector3(parentBone.WorldScaleX, parentBone.WorldScaleY, 1f);
+				if (followLocalScale)
+					localScale.Scale(new Vector3(bone.ScaleX, bone.ScaleY, 1f));
+				if (followSkeletonFlip)
+					localScale.y *= Mathf.Sign(bone.Skeleton.ScaleX * bone.Skeleton.ScaleY) * additionalFlipScale;
+				thisTransform.localScale = localScale;
+			}
 		}
 	}
-
 }

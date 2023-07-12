@@ -137,10 +137,10 @@ public class EnemyMovement : MonoBehaviour
         {
             isMoving = false;
             isIdle = true;
-            if(currentAnim!= idleAnim)
+            /*if(currentAnim!= idleAnim)
             {
                 skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
-            }
+            }*/
         }
         else
         {

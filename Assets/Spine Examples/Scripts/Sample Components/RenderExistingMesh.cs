@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -68,7 +68,7 @@ namespace Spine.Unity.Examples {
 					return;
 			}
 
-			var parentMaterials = referenceRenderer.sharedMaterials;
+			Material[] parentMaterials = referenceRenderer.sharedMaterials;
 			if (replacementMaterials.Length != parentMaterials.Length) {
 				replacementMaterials = new MaterialReplacement[parentMaterials.Length];
 			}
@@ -87,7 +87,7 @@ namespace Spine.Unity.Examples {
 			}
 
 			// subscribe to OnMeshAndMaterialsUpdated
-			var skeletonRenderer = referenceRenderer.GetComponent<SkeletonAnimation>();
+			SkeletonAnimation skeletonRenderer = referenceRenderer.GetComponent<SkeletonAnimation>();
 			if (skeletonRenderer) {
 				skeletonRenderer.OnMeshAndMaterialsUpdated -= UpdateOnCallback;
 				skeletonRenderer.OnMeshAndMaterialsUpdated += UpdateOnCallback;
@@ -101,10 +101,15 @@ namespace Spine.Unity.Examples {
 		}
 
 #if UNITY_EDITOR
+		// handle disabled scene reload
+		private void OnEnable () {
+			if (Application.isPlaying)
+				Awake();
+		}
+
 		private void Update () {
-			if (!Application.isPlaying) {
+			if (!Application.isPlaying)
 				InitializeDict();
-			}
 		}
 #endif
 
@@ -128,12 +133,12 @@ namespace Spine.Unity.Examples {
 		void UpdateMaterials () {
 			ownMeshFilter.sharedMesh = referenceMeshFilter.sharedMesh;
 
-			var parentMaterials = referenceRenderer.sharedMaterials;
+			Material[] parentMaterials = referenceRenderer.sharedMaterials;
 			if (sharedMaterials.Length != parentMaterials.Length) {
 				sharedMaterials = new Material[parentMaterials.Length];
 			}
 			for (int i = 0; i < parentMaterials.Length; ++i) {
-				var parentMaterial = parentMaterials[i];
+				Material parentMaterial = parentMaterials[i];
 				if (replacementMaterialDict.ContainsKey(parentMaterial)) {
 					sharedMaterials[i] = replacementMaterialDict[parentMaterial];
 				}
@@ -142,8 +147,9 @@ namespace Spine.Unity.Examples {
 		}
 
 		void InitializeDict () {
+			replacementMaterialDict.Clear();
 			for (int i = 0; i < replacementMaterials.Length; ++i) {
-				var entry = replacementMaterials[i];
+				MaterialReplacement entry = replacementMaterials[i];
 				replacementMaterialDict[entry.originalMaterial] = entry.replacementMaterial;
 			}
 		}

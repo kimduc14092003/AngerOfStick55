@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -54,14 +54,14 @@ namespace Spine.Unity.Prototyping {
 			if (animationStateComponent == null)
 				animationStateComponent = skeletonComponent as IAnimationStateComponent;
 			if (animationStateComponent == null) return;
-			var skeleton = skeletonComponent.Skeleton;
+			Skeleton skeleton = skeletonComponent.Skeleton;
 			if (skeleton == null) return;
 
 
-			var skeletonData = skeleton.Data;
-			var state = animationStateComponent.AnimationState;
-			foreach (var ep in events) {
-				var eventData = skeletonData.FindEvent(ep.spineEvent);
+			SkeletonData skeletonData = skeleton.Data;
+			AnimationState state = animationStateComponent.AnimationState;
+			foreach (EventPair ep in events) {
+				EventData eventData = skeletonData.FindEvent(ep.spineEvent);
 				ep.eventDelegate = ep.eventDelegate ?? delegate (TrackEntry trackEntry, Event e) { if (e.Data == eventData) ep.unityHandler.Invoke(); };
 				state.Event += ep.eventDelegate;
 			}
@@ -71,8 +71,8 @@ namespace Spine.Unity.Prototyping {
 			if (animationStateComponent == null) animationStateComponent = GetComponent<IAnimationStateComponent>();
 			if (animationStateComponent.IsNullOrDestroyed()) return;
 
-			var state = animationStateComponent.AnimationState;
-			foreach (var ep in events) {
+			AnimationState state = animationStateComponent.AnimationState;
+			foreach (EventPair ep in events) {
 				if (ep.eventDelegate != null) state.Event -= ep.eventDelegate;
 				ep.eventDelegate = null;
 			}

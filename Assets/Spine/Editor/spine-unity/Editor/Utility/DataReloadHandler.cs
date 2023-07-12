@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated January 1, 2020. Replaces all prior versions.
+ * Last updated September 24, 2021. Replaces all prior versions.
  *
- * Copyright (c) 2013-2020, Esoteric Software LLC
+ * Copyright (c) 2013-2021, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -60,17 +60,17 @@ namespace Spine.Unity.Editor {
 			}
 
 			public static void ReloadAllActiveSkeletonsEditMode () {
-
+				if (!Preferences.reloadAfterPlayMode) return;
 				if (EditorApplication.isPaused) return;
 				if (EditorApplication.isPlaying) return;
 				if (EditorApplication.isCompiling) return;
 				if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
-				var skeletonDataAssetsToReload = new HashSet<SkeletonDataAsset>();
+				HashSet<SkeletonDataAsset> skeletonDataAssetsToReload = new HashSet<SkeletonDataAsset>();
 
-				var activeSkeletonRenderers = GameObject.FindObjectsOfType<SkeletonRenderer>();
-				foreach (var sr in activeSkeletonRenderers) {
-					var skeletonDataAsset = sr.skeletonDataAsset;
+				SkeletonRenderer[] activeSkeletonRenderers = GameObject.FindObjectsOfType<SkeletonRenderer>();
+				foreach (SkeletonRenderer sr in activeSkeletonRenderers) {
+					SkeletonDataAsset skeletonDataAsset = sr.skeletonDataAsset;
 					if (skeletonDataAsset != null) skeletonDataAssetsToReload.Add(skeletonDataAsset);
 				}
 
@@ -79,24 +79,24 @@ namespace Spine.Unity.Editor {
 				// by the instance of the ScriptableObject being destroyed but still assigned.
 				// Here we save the skeletonGraphic.skeletonDataAsset asset path in order
 				// to restore it later.
-				var activeSkeletonGraphics = GameObject.FindObjectsOfType<SkeletonGraphic>();
-				foreach (var skeletonGraphic in activeSkeletonGraphics) {
-					var skeletonDataAsset = skeletonGraphic.skeletonDataAsset;
+				SkeletonGraphic[] activeSkeletonGraphics = GameObject.FindObjectsOfType<SkeletonGraphic>();
+				foreach (SkeletonGraphic skeletonGraphic in activeSkeletonGraphics) {
+					SkeletonDataAsset skeletonDataAsset = skeletonGraphic.skeletonDataAsset;
 					if (skeletonDataAsset != null) {
-						var assetPath = AssetDatabase.GetAssetPath(skeletonDataAsset);
-						var sgID = skeletonGraphic.GetInstanceID();
+						string assetPath = AssetDatabase.GetAssetPath(skeletonDataAsset);
+						int sgID = skeletonGraphic.GetInstanceID();
 						savedSkeletonDataAssetAtSKeletonGraphicID[sgID] = assetPath;
 						skeletonDataAssetsToReload.Add(skeletonDataAsset);
 					}
 				}
 
-				foreach (var skeletonDataAsset in skeletonDataAssetsToReload) {
+				foreach (SkeletonDataAsset skeletonDataAsset in skeletonDataAssetsToReload) {
 					ReloadSkeletonDataAsset(skeletonDataAsset, false);
 				}
 
-				foreach (var skeletonRenderer in activeSkeletonRenderers)
+				foreach (SkeletonRenderer skeletonRenderer in activeSkeletonRenderers)
 					skeletonRenderer.Initialize(true);
-				foreach (var skeletonGraphic in activeSkeletonGraphics)
+				foreach (SkeletonGraphic skeletonGraphic in activeSkeletonGraphics)
 					skeletonGraphic.Initialize(true);
 			}
 
@@ -106,13 +106,13 @@ namespace Spine.Unity.Editor {
 				if (EditorApplication.isCompiling) return;
 				if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 
-				var activeSkeletonRenderers = GameObject.FindObjectsOfType<SkeletonRenderer>();
-				foreach (var renderer in activeSkeletonRenderers) {
+				SkeletonRenderer[] activeSkeletonRenderers = GameObject.FindObjectsOfType<SkeletonRenderer>();
+				foreach (SkeletonRenderer renderer in activeSkeletonRenderers) {
 					if (renderer.isActiveAndEnabled && renderer.skeletonDataAsset == skeletonDataAsset) renderer.Initialize(true);
 				}
 
-				var activeSkeletonGraphics = GameObject.FindObjectsOfType<SkeletonGraphic>();
-				foreach (var graphic in activeSkeletonGraphics) {
+				SkeletonGraphic[] activeSkeletonGraphics = GameObject.FindObjectsOfType<SkeletonGraphic>();
+				foreach (SkeletonGraphic graphic in activeSkeletonGraphics) {
 					if (graphic.isActiveAndEnabled && graphic.skeletonDataAsset == skeletonDataAsset)
 						graphic.Initialize(true);
 				}
@@ -133,7 +133,7 @@ namespace Spine.Unity.Editor {
 				foreach (string guid in guids) {
 					string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
 					if (!string.IsNullOrEmpty(path)) {
-						var referenceAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationReferenceAsset>(path);
+						AnimationReferenceAsset referenceAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationReferenceAsset>(path);
 						if (referenceAsset.SkeletonDataAsset == skeletonDataAsset)
 							func(referenceAsset);
 					}
