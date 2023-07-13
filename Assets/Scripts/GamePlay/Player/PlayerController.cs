@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SkeletonAnimation skeletonAnimation;
     [SerializeField] private Transform bodyTransform;
 
-    [SerializeField] private SpineAnimationData data;
+    [SerializeField] private SpineAnimationData spineAnimationData;
     [Header("Spine Animation")]
     [SpineAnimation]
     public string idleAnim;
@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
     private bool isFacingRight;
     private bool isClimb,isBow,isJump, isAttackKick0 = false, isTrample = false, isAttackPunch = false, 
         isThrowEnemy,isThrowOnce=true, isSkill=false,isAttackAnim=false;
-    private bool isFalling=false,isSetBeginClimpPos=false,isDelayForCombo=false;
+    private bool isFalling=false,isSetBeginClimpPos=false;
 
     [SerializeField] private CapsuleCollider2D capsuleCollider;
     [SerializeField] private LedgeDetection ledgeDetection;
@@ -64,18 +64,13 @@ public class PlayerController : MonoBehaviour
         HandlePlayerBasicAnimation();
         IsCharacterOnGround();
         GetCurrentAnimation();
-
-        if (isAttackKick0)
-        {
-            isDelayForCombo = true;
-        }
     }
 
     private void GetCurrentAnimation()
     {
         if (currentAnim != GetCurrentAnimation(0).Name)
         {
-           // Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
+            //Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name);
             currentAnim = GetCurrentAnimation(0).Name;
         }
     }
@@ -100,7 +95,6 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireSphere(attackColliders[1].transform.position, 0.5f);*/
     }
 
-
     private void HandlePlayerInput()
     {
         // Xử lý di chuyển trái phải 
@@ -108,19 +102,24 @@ public class PlayerController : MonoBehaviour
         if (horizontalValue > 0)
         {
             StopBow();
-            isFacingRight = true;
+            if (!isAttackKick0 && !isAttackPunch && !isTrample)
+            {
+                isFacingRight = true;
+            }
             
         }
         else
         if(horizontalValue < 0)
         {
             StopBow();
-            isFacingRight = false;
-            
+            if (!isAttackKick0 && !isAttackPunch && !isTrample)
+            {
+                isFacingRight = false;
+            }
         }
 
         // Xử lý tấn công 1
-        if (Input.GetKeyDown(KeyCode.U)&&!isJump )
+        if (Input.GetKeyDown(KeyCode.U)&&!isJump && !isSkill)
         {
             if (!isTrample)
             {
@@ -131,7 +130,7 @@ public class PlayerController : MonoBehaviour
             tempTime = Time.time;
         }
         // Xử lý tấn công 2
-        if (Input.GetKeyDown(KeyCode.J) && !isJump)
+        if (Input.GetKeyDown(KeyCode.J) && !isJump && !isSkill)
         {
             if (!isAttackPunch)
             {
@@ -143,7 +142,7 @@ public class PlayerController : MonoBehaviour
             tempTime = Time.time;
         }
         // Xử lý tấn công 3
-        if (Input.GetKeyDown(KeyCode.K) && !isJump)
+        if (Input.GetKeyDown(KeyCode.K) && !isJump && !isSkill)
         {
             if (!isAttackKick0)
             {
@@ -164,7 +163,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         // Xử lý sự kiện nhảy của Player
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && !isSkill)
         {
             StopBow();
             StartJump();
@@ -175,7 +174,7 @@ public class PlayerController : MonoBehaviour
             isJump = true;
         }
         // Xử lý sự kiện nhảy đá 1
-        if(isJump&& Input.GetKeyDown(KeyCode.J))
+        if(isJump&& Input.GetKeyDown(KeyCode.J) && !isSkill)
         {
             if(jumpCount > 0&&!isAttackPunch)
             {
@@ -185,7 +184,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         // Xử lý sự kiện nhảy đá 2
-        if (isJump && Input.GetKeyDown(KeyCode.K))
+        if (isJump && Input.GetKeyDown(KeyCode.K) && !isSkill)
         {
             if(jumpCount>0)
             {
@@ -241,8 +240,6 @@ public class PlayerController : MonoBehaviour
 
         if (trackEntry.ToString() == punchComboAnim[5])
         {
-            explosiveGameObject.transform.position = attackColliders[1].transform.position;
-            explosiveGameObject.SetActive(true);
 
         }
     }
@@ -311,13 +308,11 @@ public class PlayerController : MonoBehaviour
                         break;
                     }
             }
-
-
-           /* for (int i = 0; i < attackColliders.Length; i++)
+            if (currentAnim == punchComboAnim[5])
             {
-                attackColliders[i].SetActive(true);
-                StartCoroutine(TurnOffAttackColliders(i));
-            }*/
+                explosiveGameObject.transform.position = attackColliders[1].transform.position;
+                explosiveGameObject.SetActive(true);
+            }
         }
         
         // Xử lý event khi animation là Combo Kick Anim
@@ -330,7 +325,7 @@ public class PlayerController : MonoBehaviour
             else*/
             if (e.Data.Name == "begin")
             {
-                rb.velocity= Vector2.right * data.GetKickAt(currentIndexAttackCombo) * ((isFacingRight)?1:-1);
+                rb.velocity= Vector2.right * spineAnimationData.GetKickAt(currentIndexAttackCombo) * ((isFacingRight)?1:-1);
             }
             if (e.Data.Name == "end")
             {
@@ -351,11 +346,11 @@ public class PlayerController : MonoBehaviour
             {
                 if (currentAnim == punchComboAnim[4])
                 {
-                    rb.velocity = new Vector2(1f * ((isFacingRight) ? 1 : -1), 1) * data.GetPunchAt(currentIndexAttackCombo) ;
+                    rb.velocity = new Vector2(1f * ((isFacingRight) ? 1 : -1), 1) * spineAnimationData.GetPunchAt(currentIndexAttackCombo) ;
                 }
                 else
                 {
-                    rb.velocity = Vector2.right * data.GetPunchAt(currentIndexAttackCombo) * ((isFacingRight) ? 1 : -1);
+                    rb.velocity = Vector2.right * spineAnimationData.GetPunchAt(currentIndexAttackCombo) * ((isFacingRight) ? 1 : -1);
                 }
             }
             if (e.Data.Name == "stop1")
@@ -404,6 +399,8 @@ public class PlayerController : MonoBehaviour
 
             if (e.Data.Name == "hit")
             {
+                explosiveGameObject.transform.position = attackColliders[1].transform.position;
+                explosiveGameObject.SetActive(true);
                 Invoke("UsingSkillDone", 0.25f);
             }
         }
@@ -475,44 +472,47 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator FlipPlayer()
     {
-        if(isFacingRight)
+        if (!isAttackKick0)
         {
-            if(transform.rotation!=Quaternion.Euler(0f, 0f, 0f))
+            if(isFacingRight)
             {
-                isClimb = false;
-                //CheckAndStopAllCombo();
-                isThrowEnemy= IsCanThrowEnemy();
-                yield return 0;
-                transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                SetIsClimbValue(ledgeDetection.GetColliderCharacterClimb());
-
-                /* for (int i = 0; i < attackColliders.Length; i++)
+                if(transform.rotation!=Quaternion.Euler(0f, 0f, 0f))
                 {
-                    attackColliders[i].SetActive(true);
-                    StartCoroutine(TurnOffAttackColliders(i));
-                }*/
-                ReturnIdleAnim();
+                    isClimb = false;
+                    //CheckAndStopAllCombo();
+                    isThrowEnemy= IsCanThrowEnemy();
+                    yield return 0;
+                    transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                    SetIsClimbValue(ledgeDetection.GetColliderCharacterClimb());
 
-                ThrowEnemy();
+                    /* for (int i = 0; i < attackColliders.Length; i++)
+                    {
+                        attackColliders[i].SetActive(true);
+                        StartCoroutine(TurnOffAttackColliders(i));
+                    }*/
+                    ReturnIdleAnim();
+
+                    ThrowEnemy();
+                }
             }
-        }
-        else
-        {
-            if (transform.rotation.y != -1&& transform.rotation.y != 1)
+            else
             {
-                isClimb = false;
-                //CheckAndStopAllCombo();
-                isThrowEnemy = IsCanThrowEnemy();
-                yield return 0;
-                ReturnIdleAnim();
-                transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-                SetIsClimbValue(ledgeDetection.GetColliderCharacterClimb());
-                /*                for (int i = 0; i < attackColliders.Length; i++)
-                                {
-                                    attackColliders[i].SetActive(true);
-                                    StartCoroutine(TurnOffAttackColliders(i));
-                                }*/
-                ThrowEnemy();
+                if (transform.rotation.y != -1&& transform.rotation.y != 1)
+                {
+                    isClimb = false;
+                    //CheckAndStopAllCombo();
+                    isThrowEnemy = IsCanThrowEnemy();
+                    yield return 0;
+                    ReturnIdleAnim();
+                    transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+                    SetIsClimbValue(ledgeDetection.GetColliderCharacterClimb());
+                    /*                for (int i = 0; i < attackColliders.Length; i++)
+                                    {
+                                        attackColliders[i].SetActive(true);
+                                        StartCoroutine(TurnOffAttackColliders(i));
+                                    }*/
+                    ThrowEnemy();
+                }
             }
         }
         yield return null;
@@ -531,16 +531,16 @@ public class PlayerController : MonoBehaviour
         if (!isClimb&&!isThrowEnemy)
         {
             //Xử lý di chuyển trái phải cho player 
-            if(!isAttackKick0 && !isTrample && !isAttackPunch)
+            if(!isAttackKick0 && !isTrample && !isAttackPunch&&!isSkill)
             {
-                if (horizontalValue != 0&&!isDelayForCombo)
+                if (horizontalValue != 0)
                 {
-                    //Debug.Log("Player Moving!");
+                    //Debug.Log("Player Moving!" + isAttackKick0);
                     rb.velocity = new Vector2(horizontalValue * speed*Time.deltaTime, rb.velocity.y);
                 }
                 else
                 {
-                    //Dừng nhân vật khi không người chơi không di chuyển nữa
+                    //Dừng nhân vật khi người chơi không di chuyển nữa
                     //Debug.Log("Stop x velocity!");
                     rb.velocity = new Vector2(0, rb.velocity.y);
                 }
@@ -645,7 +645,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         else*/
-        if (horizontalValue != 0&&!isDelayForCombo)
+        if (horizontalValue != 0)
         {
             if (skeletonAnimation.AnimationState.ToString() != runAnim)
             {
@@ -655,7 +655,6 @@ public class PlayerController : MonoBehaviour
 
         else
         {
-            if(!isDelayForCombo)
             ReturnIdleAnim();
         }
 
@@ -675,10 +674,10 @@ public class PlayerController : MonoBehaviour
             }
 
             yield return new WaitForSeconds(duration);
-            if (tempTime+duration < Time.time)
+            if (tempTime + duration < Time.time)
             {
                 ReturnIdleAnim();
-                
+
                 break;
             }
         }
@@ -708,7 +707,6 @@ public class PlayerController : MonoBehaviour
         //ReturnIdleAnim();
 
         isAttackKick0 = false;
-        Invoke("ComboComplete", 0.3f);
     }
 
     IEnumerator TrampledAttackCombo()
@@ -740,10 +738,7 @@ public class PlayerController : MonoBehaviour
         isTrample = false;
     }
 
-    private void ComboComplete()
-    {
-        isDelayForCombo = false;
-    }
+    
 
     private void UsingSkill()
     {
@@ -780,28 +775,68 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            // isThrowEnemy = true;
+            // Xử lý đẩy lùi khi đánh trúng kẻ địch
            
             EnemyController enemyController = collision.transform.parent.root.gameObject.GetComponent<EnemyController>();
-            if(currentAnim == punchComboAnim[3])
+            switch (currentAnim)
             {
-                enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.ThrowUp);
-            }
-            else
-            if (currentAnim == punchComboAnim[4])
-            {
-                enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.FallDown);
+                case var value when value == punchComboAnim[3]:
+                case var value2 when value2 == kickComboAnim[4]:
 
-            }
-            else
-            if (currentAnim == punchComboAnim[5])
-            {
-                enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.FlyAway);
+                    {
+                        if (punchComboAnim.Contains(currentAnim))
+                        {
+                            enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.ThrowUp, spineAnimationData.punchKnockBackForce[currentIndexAttackCombo]);
+                        }
+                        else
+                        if (kickComboAnim.Contains(currentAnim))
+                        {
+                            enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.ThrowUp, spineAnimationData.kickKnockBackForce[currentIndexAttackCombo]);
+                        }
+                        break;
+                    }
+                case var value when value == punchComboAnim[4]:
+                    {
+                        if (punchComboAnim.Contains(currentAnim))
+                        {
+                            enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.FallDown, spineAnimationData.punchKnockBackForce[currentIndexAttackCombo]);
+                        }
+                        else
+                        if (kickComboAnim.Contains(currentAnim))
+                        {
+                            enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.FallDown, spineAnimationData.kickKnockBackForce[currentIndexAttackCombo]);
+                        }
+                        break;
+                    }
+                //case var value when value == punchComboAnim[5]:
+                case var value2 when value2 == kickComboAnim[5]:
 
-            }
-            else
-            {
-                enemyController.HandleDameTaken(10, transform,CharacterTakeHitState.KnockBack);
+                    {
+                         if (punchComboAnim.Contains(currentAnim))
+                        {
+                            enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.FlyAway, spineAnimationData.punchKnockBackForce[currentIndexAttackCombo]);
+                        }
+                        else
+                        if (kickComboAnim.Contains(currentAnim))
+                        {
+                            enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.FlyAway, spineAnimationData.kickKnockBackForce[currentIndexAttackCombo]);
+                        }
+                        break;
+                    }
+                default:
+                    {
+                         if (punchComboAnim.Contains(currentAnim))
+                        {
+                            enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.KnockBack, spineAnimationData.punchKnockBackForce[currentIndexAttackCombo]);
+                        }
+                        else
+                        if (kickComboAnim.Contains(currentAnim))
+                        {
+                            enemyController.HandleDameTaken(10, transform, CharacterTakeHitState.KnockBack, spineAnimationData.kickKnockBackForce[currentIndexAttackCombo]);
+                        }
+                        break;
+                    }
+
             }
         }
     }

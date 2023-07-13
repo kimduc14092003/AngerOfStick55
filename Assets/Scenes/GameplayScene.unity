@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skeletonDataAsset: {fileID: 11400000, guid: f52342a32273a4a47a8ea612dd83a9f4, type: 2}
+  skeletonDataAsset: {fileID: 11400000, guid: 12b4ee219d1850d4a854cd6fb82d5543, type: 2}
   initialSkinName: 
   fixPrefabOverrideViaMeshFilter: 2
   initialFlipX: 0
@@ -223,7 +223,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b4e1aade9a0f37c4ebe27d50601fa6b3, type: 2}
+  - {fileID: 2100000, guid: 0c401a6f5f61657439de1299d1c961db, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -279,7 +279,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14555724}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1dc4cd4a6a59a884d93283cb0204217f, type: 3}
   m_Name: 
@@ -319,13 +319,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25c4feedde4dc564981ed704345ae9c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thrust: 2
-  throwUpForce: 6
-  fallDownForce: 20
-  flyAwayForce: 4
   delayToAttack: 3
   currentDelayToAttack: 0
-  health: 3000
+  hitTime: 1
+  isHit: 0
+  health: 1000
   idleAnim: IDLE
   hitAnim: HIT
   deadAnim: DEAD
@@ -2999,7 +2997,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.013122328, y: -0.1702503}
+  m_Offset: {x: 0.020184001, y: -0.18483037}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3010,7 +3008,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.06284888, y: 0.2860738}
+  m_Size: {x: 0.12140666, y: 0.3428471}
   m_EdgeRadius: 0
 --- !u!1 &897675651
 GameObject:
@@ -4996,7 +4994,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.0142124, y: -0.14065248}
+  m_Offset: {x: 0.0074425507, y: -0.12076539}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -5007,7 +5005,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.05858423, y: 0.26687813}
+  m_Size: {x: 0.11688636, y: 0.3066523}
   m_EdgeRadius: 0
 --- !u!1 &1445402200
 GameObject:
@@ -5321,7 +5319,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!58 &1511136767
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -5384,6 +5382,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dac4e460763bffd4ca2c2068e6b6c3a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosiveTime: 0.05
+  knockBackForce: 4
 --- !u!1 &1557152819
 GameObject:
   m_ObjectHideFlags: 0
@@ -6741,7 +6741,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d247ba06193faa74d9335f5481b2b56c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skeletonDataAsset: {fileID: 11400000, guid: f52342a32273a4a47a8ea612dd83a9f4, type: 2}
+  skeletonDataAsset: {fileID: 11400000, guid: ab33a4da491e9e34e9c3f1db52717a3b, type: 2}
   initialSkinName: 
   fixPrefabOverrideViaMeshFilter: 2
   initialFlipX: 0
@@ -6789,7 +6789,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b4e1aade9a0f37c4ebe27d50601fa6b3, type: 2}
+  - {fileID: 2100000, guid: 0934832535fc25b408f952d3448ce63b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6869,7 +6869,7 @@ MonoBehaviour:
   offsetBeginClimb: {x: 0, y: 2.8}
   skeletonAnimation: {fileID: 2019363922}
   bodyTransform: {fileID: 82717493}
-  data: {fileID: 11400000, guid: 073cd8709f644b142b1fad320e1ea87a, type: 2}
+  spineAnimationData: {fileID: 11400000, guid: 073cd8709f644b142b1fad320e1ea87a, type: 2}
   idleAnim: IDLE
   runAnim: RUN
   jumpAnim: JUMP

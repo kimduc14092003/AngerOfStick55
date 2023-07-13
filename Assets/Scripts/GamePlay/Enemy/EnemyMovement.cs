@@ -19,24 +19,20 @@ public class EnemyMovement : MonoBehaviour
     private SkeletonAnimation skeletonAnimation;
     private Rigidbody2D rb;
     private GameObject target;
+    private EnemyController enemyController;
 
     private float tempTime;
-    private bool isFindTarget;
-    private bool isTargetInLeft = true;
-    private bool isJumping;
-    private bool isClimbing;
-    private bool isDead = false;
-    private bool isMoving = true;
-    private bool isIdle = true;
+    private bool isCurrentDirectionLeft=true;
+    private bool isFindTarget, isTargetInLeft = true , isJumping, isClimbing, isDead = false, isMoving = true, isIdle = true;
     private string currentAnim;
 
     public bool isTargetInAttackZone;
-    public bool isCanAttack;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         skeletonAnimation = GetComponent<SkeletonAnimation>();
+        enemyController = GetComponent<EnemyController>();
         rb.velocity = Vector2.left * speed * Time.deltaTime;
     }
 
@@ -137,16 +133,34 @@ public class EnemyMovement : MonoBehaviour
         {
             isMoving = false;
             isIdle = true;
-            /*if(currentAnim!= idleAnim)
+            if (currentAnim != idleAnim&&!enemyController.isAttack)
             {
                 skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
-            }*/
+            }
         }
         else
         {
             //moving time
+            if (enemyController.isHit)
+            {
+                return;
+            }
 
-            if (isTargetInLeft)
+            if (isMoving)
+            {
+                isIdle = false;
+                if (isCurrentDirectionLeft)
+                {
+                    rb.velocity = new Vector2(speed * -1f * Time.deltaTime, rb.velocity.y);
+                }
+                else
+                {
+                    rb.velocity = new Vector2(speed * Time.deltaTime, rb.velocity.y);
+
+                }
+            }
+
+            /*if (isTargetInLeft)
             {
                 if (isMoving)
                 {
@@ -182,14 +196,14 @@ public class EnemyMovement : MonoBehaviour
                         rb.velocity = new Vector2(speed * Time.deltaTime, rb.velocity.y);
                     }
                 }
-            }
+            }*/
 
             //wait time
             if (tempTime <= Time.time)
             {
                 if (!isIdle)
                 {
-                    Debug.Log("idle");
+                    isCurrentDirectionLeft = isTargetInLeft;
                     rb.velocity = new Vector2(0, 0);
                     isIdle = true;
                     isMoving = false;
@@ -204,14 +218,16 @@ public class EnemyMovement : MonoBehaviour
 
     IEnumerator GetTempTimeInWait(float waitTime)
     {
+        //Thời gian này sẽ chạy anim Idle
         yield return new WaitForSeconds(waitTime);
-        float randomNum = Random.Range(moveTimeMin, moveTimeMax);
-        tempTime = Time.time + randomNum;
-        isIdle = false;
-        isMoving = true;
-        skeletonAnimation.AnimationState.SetAnimation(0, runAnim, true);
-
-        yield return new WaitForSeconds(randomNum);
+        if(!enemyController.isHit)
+        {
+            float randomNum = Random.Range(moveTimeMin, moveTimeMax);
+            tempTime = Time.time + randomNum;
+            isIdle = false;
+            isMoving = true;
+            skeletonAnimation.AnimationState.SetAnimation(0, runAnim, true);
+        }
     }
 
     private void FlipCharacter()

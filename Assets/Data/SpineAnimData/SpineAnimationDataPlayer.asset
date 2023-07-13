@@ -14,15 +14,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   punchVelocity:
   - 0
-  - 5
+  - 3
   - 0
   - 4.2
   - 7.4
   - 0
   kickVelocity:
-  - 10
-  - 10
-  - 10
-  - 10
-  - 10
-  - 30
+  - 7.5
+  - 7.5
+  - 7.5
+  - 7.5
+  - 7.5
+  - 35
+  punchKnockBackForce:
+  - 2
+  - 2
+  - 2
+  - 6
+  - 20
+  - 4
+  kickKnockBackForce:
+  - 2
+  - 2
+  - 2
+  - 2
+  - 6
+  - 4

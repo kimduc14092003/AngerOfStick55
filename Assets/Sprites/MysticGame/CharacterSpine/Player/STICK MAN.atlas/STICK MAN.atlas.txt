@@ -1,0 +1,13 @@
+STICK MAN.png
+size:75,101
+filter:Linear,Linear
+pma:true
+Weaponimg[7]
+bounds:2,32,56,48
+chan
+bounds:2,82,17,68
+rotate:90
+head1
+bounds:2,2,41,28
+than
+bounds:60,30,13,50

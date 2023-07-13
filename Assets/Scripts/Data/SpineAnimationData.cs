@@ -7,6 +7,9 @@ public class SpineAnimationData : ScriptableObject
 {
     public List<float> punchVelocity;
     public List<float> kickVelocity;
+    public List<float> punchKnockBackForce;
+    public List<float> kickKnockBackForce;
+
 
     public float GetPunchAt(int index)
     {

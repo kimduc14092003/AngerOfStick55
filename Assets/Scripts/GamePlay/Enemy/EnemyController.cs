@@ -9,8 +9,9 @@ using RotateMode = DG.Tweening.RotateMode;
 
 public class EnemyController : MonoBehaviour
 {
-    public float thrust, throwUpForce,fallDownForce,flyAwayForce,delayToAttack,currentDelayToAttack;
-    private bool isDead = false, isAttack=false;
+    public float delayToAttack,currentDelayToAttack,hitTime;
+    public bool isHit=false, isAttack = false;
+    private bool isDead = false;
     private SkeletonAnimation skeletonAnimation;
     [SerializeField] private float health;
     [SpineAnimation]
@@ -37,20 +38,25 @@ public class EnemyController : MonoBehaviour
     {
         if (enemyMovement.isTargetInAttackZone)
         {
-            if (currentDelayToAttack <= 0)
+            if (!isHit)
             {
-                EnemyAttack();
-            }
-            else
-            {
-                currentDelayToAttack -= Time.deltaTime;
+                if (currentDelayToAttack <= 0)
+                {
+                    EnemyAttack();
+                }
+                else
+                {
+                    currentDelayToAttack -= Time.deltaTime;
+                }
             }
         }
     }
 
     // Xử lý khi enemy nhận dame và chết
-    public void HandleDameTaken(float dame, Transform transformFrom,CharacterTakeHitState state)
+    public void HandleDameTaken(float dame, Transform transformFrom,CharacterTakeHitState state,float force)
     {
+        isHit = true;
+        Invoke("HitDone", hitTime);
         this.health -= dame;
         if (this.health <= 0)
         {
@@ -66,24 +72,24 @@ public class EnemyController : MonoBehaviour
         {
             case CharacterTakeHitState.KnockBack:
                 {
-                    KnockBack(transformFrom);
+                    KnockBack(transformFrom,force);
                     break;
                 }
             case CharacterTakeHitState.ThrowUp:
                 {
-                    ThrowUp(transformFrom);
-                    Debug.Log("Throw Up: "+Time.time);
+                    ThrowUp(transformFrom, force);
                     break;
                 }
             case CharacterTakeHitState.FallDown:
                 {
-                    FallDown(transformFrom);
-                    Debug.Log("Fall Down: " + Time.time);
+                    FallDown(transformFrom, force);
                     break;
                 }
             case CharacterTakeHitState.FlyAway:
                 {
-                    FlyAway(transformFrom);
+                    Debug.Log("FlyAway: " + Time.time);
+
+                    FlyAway(transformFrom, force);
                     break;
                 }
         }
@@ -99,6 +105,11 @@ public class EnemyController : MonoBehaviour
         stopHitStateCoroutine = StartCoroutine(KnockCo());
     }
 
+    private void HitDone()
+    {
+        isHit = false;
+    }
+
 
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -112,7 +123,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void KnockBack(Transform transformFrom)
+    private void KnockBack(Transform transformFrom,float force)
     {
         skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
         skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true, 0.5f);
@@ -128,7 +139,7 @@ public class EnemyController : MonoBehaviour
             directionForce.x = -1;
         }
         directionForce.y = 0;
-        rb.AddForce(directionForce * thrust, ForceMode2D.Impulse);
+        rb.AddForce(directionForce * force, ForceMode2D.Impulse);
         HandleStopHitState();
     }
 
@@ -138,7 +149,7 @@ public class EnemyController : MonoBehaviour
         rb.velocity = Vector2.zero;
     }
 
-    private void ThrowUp(Transform transformFrom)
+    private void ThrowUp(Transform transformFrom, float force)
     {
         skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
         skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true, 0.5f);
@@ -153,21 +164,21 @@ public class EnemyController : MonoBehaviour
             directionForce.x = -1;
         }
         directionForce.y = 1;
-        rb.AddForce(new Vector2( directionForce.x*0.75f,directionForce.y) * throwUpForce, ForceMode2D.Impulse);
+        rb.AddForce(new Vector2( directionForce.x*0.75f,directionForce.y) * force, ForceMode2D.Impulse);
         HandleStopHitState();
 
     }
 
-    private void FallDown(Transform transformFrom)
+    private void FallDown(Transform transformFrom, float force)
     {
         skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
         skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true, 0.5f);
 
-        rb.AddForce(Vector2.down * fallDownForce, ForceMode2D.Impulse);
+        rb.AddForce(Vector2.down * force, ForceMode2D.Impulse);
         HandleStopHitState();
 
     }
-    private void FlyAway(Transform transformFrom)
+    private void FlyAway(Transform transformFrom, float force)
     {
         skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
         skeletonAnimation.AnimationState.AddAnimation(0, idleAnim, true, 0.5f);
@@ -182,8 +193,9 @@ public class EnemyController : MonoBehaviour
         {
             directionForce.x = -1;
         }
+        Debug.Log(directionForce);
         directionForce.y = 1;
-        rb.AddForce(new Vector2(directionForce.x , directionForce.y) * flyAwayForce, ForceMode2D.Impulse);
+        rb.AddForce(new Vector2(directionForce.x*1.5f ,Mathf.Abs( directionForce.y)) * force, ForceMode2D.Impulse);
         //HandleStopHitState();
     }
 
