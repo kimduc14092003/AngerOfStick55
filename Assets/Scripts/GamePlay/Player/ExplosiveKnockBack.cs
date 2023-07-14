@@ -10,7 +10,7 @@ public class ExplosiveKnockBack : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            Debug.Log("Hit enemy!");
+            //Debug.Log("Hit enemy!");
             EnemyController enemyController = collision.transform.parent.root.gameObject.GetComponent<EnemyController>();
             if(enemyController != null )
             {

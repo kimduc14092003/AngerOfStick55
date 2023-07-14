@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: STICK MAN_SkeletonData
   m_EditorClassIdentifier: 
   atlasAssets:
-  - {fileID: 11400000, guid: e5b7ee20097432c4e81a90634700ee67, type: 2}
+  - {fileID: 11400000, guid: 5049b84714a628348a8436de9a6cd90f, type: 2}
   scale: 0.01
-  skeletonJSON: {fileID: 4900000, guid: ba641840dda22484abcf2f3a5d7aba74, type: 3}
+  skeletonJSON: {fileID: 4900000, guid: 813899a9dbe2bb645b017a78421f29bd, type: 3}
   isUpgradingBlendModeMaterials: 0
   blendModeMaterials:
     requiresBlendModeMaterials: 0
@@ -24,26 +24,8 @@ MonoBehaviour:
     multiplyMaterials: []
     screenMaterials: []
   skeletonDataModifiers: []
-  fromAnimation:
-  - ATK_COMBO_PUNCH_0
-  - ATK_COMBO_PUNCH_0
-  - ATK_COMBO_KICK_0
-  - ATK_COMBO_KICK_0
-  - ATK_COMBO_TRAMPLE_0
-  - ATK_COMBO_TRAMPLE_0
-  toAnimation:
-  - ATK_COMBO_KICK_0
-  - ATK_COMBO_TRAMPLE_0
-  - ATK_COMBO_TRAMPLE_0
-  - ATK_COMBO_PUNCH_0
-  - ATK_COMBO_PUNCH_0
-  - ATK_COMBO_KICK_0
-  duration:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
+  fromAnimation: []
+  toAnimation: []
+  duration: []
   defaultMix: 0.2
   controller: {fileID: 0}

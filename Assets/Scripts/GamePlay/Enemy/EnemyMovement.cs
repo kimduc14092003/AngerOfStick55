@@ -9,13 +9,13 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private LayerMask layerMaskLedge;
     [SerializeField] private Transform attackZoneTrasform;
     [SerializeField] private Vector3 sizeOfAttackZone;
-    [SerializeField] private float speed, jumpPower, health, moveTimeMin, moveTimeMax, waitTimeMin, waitTimeMax;
+    [SerializeField] private float speed, jumpPower, moveTimeMin, moveTimeMax, waitTimeMin, waitTimeMax;
     [SerializeField] private LedgeDetection ledgeDetection;
     [SerializeField] private Vector2 offset1;
     [SerializeField] private CapsuleCollider2D capsuleCollider;
 
     [SpineAnimation]
-    public string idleAnim, runAnim, jumpAnim, hitAnim, deadAnim;
+    public string idleAnim, runAnim, jumpAnim, hitAnim;
     private SkeletonAnimation skeletonAnimation;
     private Rigidbody2D rb;
     private GameObject target;
@@ -23,8 +23,8 @@ public class EnemyMovement : MonoBehaviour
 
     private float tempTime;
     private bool isCurrentDirectionLeft=true;
-    private bool isFindTarget, isTargetInLeft = true , isJumping, isClimbing, isDead = false, isMoving = true, isIdle = true;
-    private string currentAnim;
+    private bool isFindTarget, isTargetInLeft = true , isJumping, isClimbing, isMoving = true, isIdle = true;
+    public string currentAnim;
 
     public bool isTargetInAttackZone;
 
@@ -44,7 +44,11 @@ public class EnemyMovement : MonoBehaviour
     private void Update()
     {
         GetCurrentAnimation();
-
+        //Kiểm tra enemy đã dead chưa
+        if (enemyController.isDead)
+        {
+            return;
+        }
         if (!isFindTarget)
         {
             DetectTargetCome();
@@ -70,7 +74,7 @@ public class EnemyMovement : MonoBehaviour
     {
         if (currentAnim != GetCurrentAnimation(0).Name)
         {
-            Debug.Log(currentAnim + " | " + GetCurrentAnimation(0).Name+": "+Time.time);
+            Debug.Log(currentAnim + " => " + GetCurrentAnimation(0).Name);
             currentAnim = GetCurrentAnimation(0).Name;
         }
     }
@@ -133,9 +137,11 @@ public class EnemyMovement : MonoBehaviour
         {
             isMoving = false;
             isIdle = true;
-            if (currentAnim != idleAnim&&!enemyController.isAttack)
+            if (currentAnim != idleAnim&&!enemyController.isAttack&&!enemyController.isHit)
             {
+                Debug.Log("idle anim!");
                 skeletonAnimation.AnimationState.SetAnimation(0, idleAnim, true);
+                rb.velocity = new Vector2(0,rb.velocity.y);
             }
         }
         else
@@ -232,6 +238,10 @@ public class EnemyMovement : MonoBehaviour
 
     private void FlipCharacter()
     {
+        if(enemyController.isHit)
+        {
+            return;
+        }
         if (!isTargetInLeft)
         {
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);

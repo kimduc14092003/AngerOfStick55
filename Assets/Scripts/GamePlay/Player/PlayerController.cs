@@ -3,6 +3,7 @@ using Spine;
 using Spine.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,7 +12,7 @@ using Animation = Spine.Animation;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D rb;
-    [SerializeField] private float speed,jumpingPower, delayTimeOfCombo;
+    [SerializeField] private float speed,jumpingPower, delayTimeOfCombo, currentHealth, maxHealth;
     [SerializeField] private Transform groundCheck,headCheck;
     [SerializeField] private LayerMask groundLayer,climbPointLayer,enemyLayer;
     [SerializeField] private int jumpMax, jumpCount;
@@ -24,14 +25,14 @@ public class PlayerController : MonoBehaviour
     [SpineAnimation]
     public string idleAnim;
     [SpineAnimation] public string runAnim,jumpAnim,hitAnim,deadAnim,jumpKick1Anim,jumpKick2Anim,skillAnim,wrestleAnim,
-                                    climpAnim,climpUpAnim,climpDownAnim,crouchAnim;
+                                    climbAnim,climbUpAnim,climbDownAnim,crouchAnim;
     [SpineAnimation] public string[] kickComboAnim, punchComboAnim, trampleComboAnim,skillComboAnim;
 
-    private float horizontalValue,tempTime;
-    private bool isFacingRight;
+    private float horizontalValue,tempTime, flyAwayTime, knockBackTime;
+    private bool isFacingRight, isDead, isHit;
     private bool isClimb,isBow,isJump, isAttackKick0 = false, isTrample = false, isAttackPunch = false, 
         isThrowEnemy,isThrowOnce=true, isSkill=false,isAttackAnim=false;
-    private bool isFalling=false,isSetBeginClimpPos=false;
+    private bool isFalling=false,isSetBeginClimbPos=false;
 
     [SerializeField] private CapsuleCollider2D capsuleCollider;
     [SerializeField] private LedgeDetection ledgeDetection;
@@ -42,7 +43,8 @@ public class PlayerController : MonoBehaviour
     private int currentIndexAttackCombo;
     private string currentAnim;
     public float skillPowerJump,skillPowerForce;
-    public string testAnything;
+    private Coroutine stopHitStateCoroutine, hitDoneCoroutine;
+
     private void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -50,8 +52,8 @@ public class PlayerController : MonoBehaviour
         isFacingRight = true;
         currentIndexAttackCombo = -1;
         skeletonAnimation.state.Event += HandleEvent;
-        skeletonAnimation.AnimationState.Complete += OnEndAnim;
-        skeletonAnimation.AnimationState.End += OnCompleteAnim;
+        skeletonAnimation.AnimationState.End += OnEndAnim;
+        skeletonAnimation.AnimationState.Complete += OnCompleteAnim;
     }
 
 
@@ -208,8 +210,8 @@ public class PlayerController : MonoBehaviour
             else
             if (Input.GetKeyDown(KeyCode.W))
             {
-                skeletonAnimation.AnimationState.SetAnimation(0,climpUpAnim,false);
-                StartCoroutine(SetNewPosClimpUp(0.1f));
+                skeletonAnimation.AnimationState.SetAnimation(0,climbUpAnim,false);
+                StartCoroutine(SetNewPosClimbUp(0.1f));
             }
         }
         // Xử lý cúi người
@@ -224,24 +226,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator SetNewPosClimpUp(float time)
+    IEnumerator SetNewPosClimbUp(float time)
     {
-        transform.position = transform.position + Vector3.up*offsetBeginClimb.y;
-      
         yield return 0;
+        yield return 0;
+        yield return 0;
+        yield return 0;
+        yield return 0;
+        yield return 0;
+        transform.position = transform.position + Vector3.up*offsetBeginClimb.y;
+        //yield return new WaitForSeconds(time);
+      
     }
 
     private void OnEndAnim(TrackEntry trackEntry)
     {
-        if (trackEntry.ToString() == climpUpAnim)
-        {
-            HandlePlayerClimbUp();
-        }
 
-        if (trackEntry.ToString() == punchComboAnim[5])
-        {
-
-        }
     }
 
     private void HandlePlayerClimbUp()
@@ -261,12 +261,24 @@ public class PlayerController : MonoBehaviour
 
     private void OnCompleteAnim(TrackEntry trackEntry)
     {
-        
+        if (trackEntry.ToString() == climbUpAnim)
+        {
+            HandlePlayerClimbUp();
+        }
+
+        if (trackEntry.ToString() == punchComboAnim[5])
+        {
+
+        }
+        if (trackEntry.ToString() == climbAnim)
+        {
+            Debug.Log("climb");
+           
+        }
     }
 
     private void HandleEvent(TrackEntry trackEntry, Spine.Event e)
     {
-
         if (e.Data.Name == "hit")
         {
             // Xử lý attack collider
@@ -292,7 +304,6 @@ public class PlayerController : MonoBehaviour
                         break;
                     }
                 case var value when value == punchComboAnim[1]:
-                case var value2 when value2 == punchComboAnim[5]:
                 case var value3 when value3 == punchComboAnim[2]:
 
                     {
@@ -310,6 +321,7 @@ public class PlayerController : MonoBehaviour
             }
             if (currentAnim == punchComboAnim[5])
             {
+                explosiveGameObject.GetComponent<ExplosiveKnockBack>().knockBackForce = spineAnimationData.punchKnockBackForce[currentIndexAttackCombo];
                 explosiveGameObject.transform.position = attackColliders[1].transform.position;
                 explosiveGameObject.SetActive(true);
             }
@@ -337,7 +349,7 @@ public class PlayerController : MonoBehaviour
         // Xử lý event khi animation là Combo Punch Anim
         if (punchComboAnim.Contains(currentAnim))
         {
-  /*          if (currentAnim == punchComboAnim[5])
+        /*if (currentAnim == punchComboAnim[5])
             {
                 rb.velocity = Vector2.right * moveAttackSpeed2 * ((isFacingRight) ? 1 : -1);
             }
@@ -402,6 +414,19 @@ public class PlayerController : MonoBehaviour
                 explosiveGameObject.transform.position = attackColliders[1].transform.position;
                 explosiveGameObject.SetActive(true);
                 Invoke("UsingSkillDone", 0.25f);
+            }
+        }
+
+        // Xử lý event khi animation là climbUpAnim
+        if(currentAnim== climbUpAnim)
+        {
+            if (e.Data.Name == "begin")
+            {
+                rb.AddForce(Vector2.up * offsetBeginClimb.y);
+            }
+            if(e.Data.Name == "end")
+            {
+                rb.velocity=Vector2.zero;
             }
         }
     }
@@ -553,10 +578,11 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("Stop velocity!");
             rb.velocity = Vector2.zero;
             rb.gravityScale = 0;
-            if (isSetBeginClimpPos)
+            if (isSetBeginClimbPos)
             {
-                isSetBeginClimpPos= false;
+                isSetBeginClimbPos= false;
                 SetBeginClimbPos();
+               
             }
         }
     }
@@ -614,11 +640,11 @@ public class PlayerController : MonoBehaviour
 
         if (isClimb)
         {
-            if (skeletonAnimation.AnimationState.ToString() != climpAnim && skeletonAnimation.AnimationState.ToString() != climpUpAnim
-                && skeletonAnimation.AnimationState.ToString() != climpDownAnim)
+            if (skeletonAnimation.AnimationState.ToString() != climbAnim && skeletonAnimation.AnimationState.ToString() != climbUpAnim
+                && skeletonAnimation.AnimationState.ToString() != climbDownAnim)
             {
-                skeletonAnimation.AnimationState.SetAnimation(0, climpAnim, false);
-                isSetBeginClimpPos = true;
+                skeletonAnimation.AnimationState.SetAnimation(0, climbAnim, false);
+                isSetBeginClimbPos = true;
             }
         }else
         if (isBow)
@@ -743,6 +769,7 @@ public class PlayerController : MonoBehaviour
     private void UsingSkill()
     {
         skeletonAnimation.AnimationState.SetAnimation(0, skillAnim, false);
+        rb.velocity = Vector2.zero;
     }
 
     private void ReturnIdleAnim()
@@ -770,6 +797,152 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         attackColliders[index].SetActive(false);
     }
+
+    // Xử lý khi Player nhận dame và chết
+    public void HandleDameTaken(float dame, Transform transformFrom, CharacterTakeHitState state, float force)
+    {
+        if (isDead) return;
+
+        if (hitDoneCoroutine != null)
+        {
+            StopCoroutine(hitDoneCoroutine);
+        }
+        isHit = true;
+        this.currentHealth -= dame;
+
+        // Khi nhận sát thương enemy sẽ không di chuyển
+        rb.velocity = Vector2.zero;
+
+        switch (state)
+        {
+            case CharacterTakeHitState.KnockBack:
+                {
+                    KnockBack(transformFrom, force);
+                    hitDoneCoroutine = StartCoroutine(HitDone(knockBackTime));
+                    break;
+                }
+            case CharacterTakeHitState.ThrowUp:
+                {
+                    ThrowUp(transformFrom, force);
+                    hitDoneCoroutine = StartCoroutine(HitDone(flyAwayTime));
+                    break;
+                }
+            case CharacterTakeHitState.FallDown:
+                {
+                    FallDown(transformFrom, force);
+                    hitDoneCoroutine = StartCoroutine(HitDone(flyAwayTime));
+                    break;
+                }
+            case CharacterTakeHitState.FlyAway:
+                {
+                    //Debug.Log("FlyAway: " + Time.time);
+                    FlyAway(transformFrom, force);
+                    hitDoneCoroutine = StartCoroutine(HitDone(flyAwayTime));
+                    break;
+                }
+        }
+
+        if (this.currentHealth <= 0)
+        {
+            //StopCoroutine(hitDoneCoroutine);
+            isDead = true;
+            Debug.Log("dead");
+            skeletonAnimation.AnimationState.AddAnimation(0, deadAnim, false, 0.1f);
+            capsuleCollider.gameObject.SetActive(false);
+            //rb.gravityScale = 0;
+        }
+
+    }
+
+    IEnumerator HitDone(float time)
+    {
+        yield return new WaitForSeconds(time);
+        isHit = false;
+    }
+    private IEnumerator KnockCo()
+    {
+        yield return new WaitForSeconds(0.5f);
+        rb.velocity = Vector2.zero;
+    }
+
+    private void KnockBack(Transform transformFrom, float force)
+    {
+        skeletonAnimation.AnimationState.SetAnimation(0, hitAnim, false);
+
+        Vector2 directionForce = transform.position - transformFrom.position;
+        directionForce = directionForce.normalized;
+        if (directionForce.x > 0)
+        {
+            directionForce.x = 1;
+        }
+        else
+        {
+            directionForce.x = -1;
+        }
+        directionForce.y = 0;
+        rb.AddForce(directionForce * force, ForceMode2D.Impulse);
+        HandleStopHitState();
+    }
+
+    private void ThrowUp(Transform transformFrom, float force)
+    {
+        skeletonAnimation.AnimationState.SetAnimation(0, deadAnim, false);
+        Vector2 directionForce = transform.position - transformFrom.position;
+        directionForce = directionForce.normalized;
+        if (directionForce.x > 0)
+        {
+            directionForce.x = 1;
+        }
+        else
+        {
+            directionForce.x = -1;
+        }
+        directionForce.y = 1;
+        rb.AddForce(new Vector2(directionForce.x * 0.4f, directionForce.y) * force, ForceMode2D.Impulse);
+        HandleStopHitState();
+
+    }
+
+    private void FallDown(Transform transformFrom, float force)
+    {
+        if (currentAnim != deadAnim)
+        {
+            skeletonAnimation.AnimationState.SetAnimation(0, deadAnim, false);
+        }
+
+        rb.AddForce(Vector2.down * force, ForceMode2D.Impulse);
+        HandleStopHitState();
+
+    }
+    private void FlyAway(Transform transformFrom, float force)
+    {
+
+        skeletonAnimation.AnimationState.SetAnimation(0, deadAnim, false);
+
+        Vector2 directionForce = transform.position - transformFrom.position;
+        directionForce = directionForce.normalized;
+        if (directionForce.x > 0)
+        {
+            directionForce.x = 1;
+        }
+        else
+        {
+            directionForce.x = -1;
+        }
+        Debug.Log(force);
+        rb.AddForce(new Vector2(directionForce.x, 0.75f) * force, ForceMode2D.Impulse);
+        //HandleStopHitState();
+    }
+
+    private void HandleStopHitState()
+    {
+        if (stopHitStateCoroutine != null)
+        {
+            StopCoroutine(stopHitStateCoroutine);
+        }
+        stopHitStateCoroutine = StartCoroutine(KnockCo());
+    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
